@@ -1,0 +1,16 @@
+{
+  "title": "CAD",
+  "type": "object",
+  "required": [
+    "type"
+  ],
+  "properties": {
+    "type": {
+      "type": "string",
+      "enum": [
+        "Inventor",
+        "STEP"
+      ]
+    }
+  }
+}
