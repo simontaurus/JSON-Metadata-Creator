@@ -75,12 +75,12 @@
     "details": {
       "oneOf": [
         {
-          "$ref": "schema/document.json",
+          "$ref": "document.json",
           "title": "Document"
         },
         {
-          "$ref": "schema/cad.json",
-          "title": "Complex Person"
+          "$ref": "cad.json",
+          "title": "CAD"
         }
       ]
     }
