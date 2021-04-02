@@ -72,5 +72,17 @@
         }
       ]
     }
+    "details": {
+      "oneOf": [
+        {
+          "$ref": "schema/document.json",
+          "title": "Document"
+        },
+        {
+          "$ref": "schema/cad.json",
+          "title": "Complex Person"
+        }
+      ]
+    }
   }
 }
