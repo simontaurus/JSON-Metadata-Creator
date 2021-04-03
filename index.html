@@ -178,7 +178,10 @@
         if (param === 'data') {
           // compress schema and value
           try {
-            data = JSON.parse(LZString.decompressFromBase64(value))
+            json = LZString.decompressFromBase64(value)
+            console.log("Loaded json :" + json)
+            data = JSON.parse(json)
+            console.log("Loaded data :" + data)
           } catch (reason) {
               console.log("Error while parsing direct link: " + reason)
           }
@@ -385,6 +388,7 @@
     }
 
     // new instance of JSONEditor
+    console.log("Data :" + data)
     jsoneditor = new window.JSONEditor(jsonEditorForm, data.options)
       
     // listen for loaded
