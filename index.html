@@ -180,6 +180,7 @@
           try {
             data = JSON.parse(LZString.decompressFromBase64(value))
           } catch (reason) {
+              console.log("Error while parsing direct link: " + reason)
           }
         }
       })
@@ -386,7 +387,7 @@
     // new instance of JSONEditor
     jsoneditor = new window.JSONEditor(jsonEditorForm, data.options)
       
-    // listen for changes
+    // listen for loaded
     jsoneditor.on('ready', function () {
         if (data.json !== null && data.json !== undefined) jsoneditor.setValue(data.json)
     })
