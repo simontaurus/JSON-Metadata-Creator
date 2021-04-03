@@ -385,7 +385,11 @@
 
     // new instance of JSONEditor
     jsoneditor = new window.JSONEditor(jsonEditorForm, data.options)
-    if (data.json !== null && data.json !== undefined) jsoneditor.setValue(data.json)
+      
+    // listen for changes
+    jsoneditor.on('ready', function () {
+        if (data.json !== null && data.json !== undefined) jsoneditor.setValue(data.json)
+    })
         
     // listen for changes
     jsoneditor.on('change', function () {
