@@ -178,7 +178,7 @@
         if (param === 'data') {
           // compress schema and value
           try {
-            json = decodeURIComponent(LZString.decompressFromBase64(value))
+            json = LZString.decompressFromBase64(decodeURIComponent(value))
             console.log("Loaded json :" + json)
             data = JSON.parse(json)
             console.log("Loaded data :" + data)
