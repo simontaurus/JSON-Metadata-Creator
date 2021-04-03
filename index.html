@@ -178,7 +178,7 @@
         if (param === 'data') {
           // compress schema and value
           try {
-            json = decodeURI(LZString.decompressFromBase64(value))
+            json = decodeURIComponent(LZString.decompressFromBase64(value))
             console.log("Loaded json :" + json)
             data = JSON.parse(json)
             console.log("Loaded data :" + data)
@@ -418,7 +418,7 @@
   var updateDirectLink = function () {
     var url = window.location.href.replace(/\?.*/, '')
     url += '?data='
-    url +=  encodeURI(LZString.compressToBase64(JSON.stringify(data)))
+    url +=  encodeURIComponent(LZString.compressToBase64(JSON.stringify(data)))
     directLink.href = url
   }
 
