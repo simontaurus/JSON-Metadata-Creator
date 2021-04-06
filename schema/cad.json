@@ -2,15 +2,15 @@
   "title": "CAD",
   "type": "object",
   "required": [
-    "type",
-    "format"
+    "file_type",
+    "file_format"
   ],
   "properties": {
-    "type": {
+    "file_type": {
       "type": "string",
       "enum": ["CAD"]
     },
-    "format": {
+    "file_format": {
       "type": "string",
       "enum": [
         "Inventor",
@@ -21,7 +21,7 @@
         "brd"
       ]
     },
-    "format_version": {
+    "file_format_version": {
       "type": "string"
     }
   }
