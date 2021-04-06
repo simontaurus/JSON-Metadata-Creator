@@ -74,26 +74,46 @@
         }
       ]
     },
+    type: "array",
+          title: "People",
+          format: "tabs",
+          items: {
+            title: "Person",
+            headerTemplate: "{{i}} - {{self.name}}",
+            oneOf: [
+              {
+                $ref: "basic_person.json",
+                title: "Basic Person"
+              },
+              {
+                $ref: "person.json",
+                title: "Complex Person"
+              }
+            ]
+    }
     "specific": {
-      "title": "Specific",
-      "oneOf": [
-        {
-          "$ref": "none.json",
-          "title": "None"
-        },
-        {
-          "$ref": "document.json",
-          "title": "Document"
-        },
-        {
-          "$ref": "cad.json",
-          "title": "CAD"
-        },
-        {
-          "$ref": "sourcecode.json",
-          "title": "Source Code"
-        }
-      ]
+      "title": "Specifics",
+      "type": "array",
+      "format": "tabs",
+      "items": {
+        "oneOf": [
+          {
+            "$ref": "none.json",
+            "title": "None"
+          },
+          {
+            "$ref": "document.json",
+            "title": "Document"
+          },
+          {
+            "$ref": "cad.json",
+            "title": "CAD"
+          },
+          {
+            "$ref": "sourcecode.json",
+            "title": "Source Code"
+          }
+        ]
     }
   }
 }
