@@ -4,7 +4,7 @@
   "required": [
     "file_name",
     "full_path",
-    "type",
+    "tags",
     "creation_date",
     "last_modified_date",
     "contributors"
@@ -21,13 +21,15 @@
       "description": "Full path/uri of file location",
       "default": "<uri>"
     },
-    "type": {
-      "type": "string",
-      "enum": [
-        "pdf",
-        "docx",
-        "png"
-      ]
+    "tags": {
+      "type": "array",
+      "format": "table",
+      "title": "Tags",
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "title": "Tag"
+      }
     },
     "creation_date": {
       "type": "string",
@@ -58,7 +60,7 @@
               "Institution A",
               "Company B"
             ],
-            "default": "ISC"
+            "default": "Institution A"
           },
           "name": {
             "type": "string"
@@ -72,8 +74,9 @@
         }
       ]
     },
-    "details": {
-      "oneOf": [
+    "specific": {
+      "title": "Specific",
+      "anyOf": [
         {
           "$ref": "document.json",
           "title": "Document"
