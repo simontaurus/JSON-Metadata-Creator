@@ -76,7 +76,24 @@
     },
     "specific": {
       "title": "Specific",
-      "$ref": "specifics.json"
+      "oneOf": [
+        {
+          "$ref": "none.json",
+          "title": "None"
+        },
+        {
+          "$ref": "document.json",
+          "title": "Document"
+        },
+        {
+          "$ref": "cad.json",
+          "title": "CAD"
+        },
+        {
+          "$ref": "sourcecode.json",
+          "title": "Source Code"
+        }
+      ]
     }
   }
 }
