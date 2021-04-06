@@ -1,0 +1,22 @@
+{
+   "type": "object",
+   "title": "Contributor",
+   "required": [
+      "affiliation",
+      "name"
+   ],
+   "properties": {
+          "affiliation": {
+            "type": "string",
+            "enum": [
+              "Institution A",
+              "Company B"
+            ],
+            "default": "Institution A"
+          },
+          "name": {
+            "type": "string",
+            "default": "Test User"
+          }
+    }
+}
