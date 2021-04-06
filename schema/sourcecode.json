@@ -2,10 +2,15 @@
   "title": "Source Code",
   "type": "object",
   "required": [
+    "type",
     "language",
     "format"
   ],
   "properties": {
+     "type": {
+      "type": "string",
+      "enum": ["Source Code"]
+    },
     "language": {
       "type": "string",
       "enum": [
