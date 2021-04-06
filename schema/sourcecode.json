@@ -2,16 +2,16 @@
   "title": "Source Code",
   "type": "object",
   "required": [
-    "type",
-    "language",
-    "format"
+    "file_type",
+    "file_language",
+    "file_format"
   ],
   "properties": {
-     "type": {
+     "file_type": {
       "type": "string",
       "enum": ["Source Code"]
     },
-    "language": {
+    "file_language": {
       "type": "string",
       "enum": [
         "Python",
@@ -21,10 +21,10 @@
         "Javascript"
       ]
     },
-    "language_version": {
+    "file_language_version": {
       "type": "string"
     },
-    "format": {
+    "file_format": {
       "type": "string",
       "enum": [
         "Text",
