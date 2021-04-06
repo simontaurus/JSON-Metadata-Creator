@@ -74,28 +74,13 @@
         }
       ]
     },
-    type: "array",
-          title: "People",
-          format: "tabs",
-          items: {
-            title: "Person",
-            headerTemplate: "{{i}} - {{self.name}}",
-            oneOf: [
-              {
-                $ref: "basic_person.json",
-                title: "Basic Person"
-              },
-              {
-                $ref: "person.json",
-                title: "Complex Person"
-              }
-            ]
-    }
-    "specific": {
+    "specifics": {
       "title": "Specifics",
       "type": "array",
       "format": "tabs",
       "items": {
+      "title": "Specific",
+      "headerTemplate": "{{i}} - {{self.file_type}}",
         "oneOf": [
           {
             "$ref": "none.json",
