@@ -2,8 +2,8 @@
   "title": "Source Code",
   "type": "object",
   "required": [
-    "language"
-    "format,
+    "language",
+    "format"
   ],
   "properties": {
     "language": {
