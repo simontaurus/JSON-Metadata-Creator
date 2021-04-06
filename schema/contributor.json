@@ -9,14 +9,17 @@
           "affiliation": {
             "type": "string",
             "enum": [
-              "Institution A",
-              "Company B"
-            ],
-            "default": "Institution A"
+              "Fraunhofer",
+              "ElringKl",
+              "VUB",
+              "CEA",
+              "CSEM",
+              "CIDETEC",
+              "Other"
+            ]
           },
           "name": {
-            "type": "string",
-            "default": "Test User"
+            "type": "string"
           }
     }
 }
