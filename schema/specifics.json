@@ -1,0 +1,21 @@
+{
+      "title": "Specific",
+      "anyOf": [
+        {
+          "$ref": "none.json",
+          "title": "None"
+        },
+        {
+          "$ref": "document.json",
+          "title": "Document"
+        },
+        {
+          "$ref": "cad.json",
+          "title": "CAD"
+        },
+        {
+          "$ref": "sourcecode.json",
+          "title": "Source Code"
+        }
+      ]
+}
