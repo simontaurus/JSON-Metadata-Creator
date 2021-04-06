@@ -1,6 +1,6 @@
 {
       "title": "Specific",
-      "anyOf": [
+      "oneOf": [
         {
           "$ref": "none.json",
           "title": "None"
