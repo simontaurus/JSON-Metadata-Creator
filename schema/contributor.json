@@ -9,12 +9,13 @@
           "affiliation": {
             "type": "string",
             "enum": [
-              "Fraunhofer",
-              "ElringKl",
+              "Fraunhofer ISC",
+              "ElringKlinger",
               "VUB",
               "CEA",
               "CSEM",
               "CIDETEC",
+              "Arkema",
               "Other"
             ]
           },
