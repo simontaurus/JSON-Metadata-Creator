@@ -1,21 +1,27 @@
 {
       "title": "Specific",
-      "oneOf": [
-        {
-          "$ref": "none.json",
-          "title": "None"
-        },
-        {
-          "$ref": "document.json",
-          "title": "Document"
-        },
-        {
-          "$ref": "cad.json",
-          "title": "CAD"
-        },
-        {
-          "$ref": "sourcecode.json",
-          "title": "Source Code"
-        }
-      ]
+      "type": "array",
+      "format": "tabs",
+      "items": {
+      "title": "Specific",
+      "headerTemplate": "{{i}} - {{self.file_type}}",
+        "oneOf": [
+          {
+            "$ref": "none.json",
+            "title": "None"
+          },
+          {
+            "$ref": "document.json",
+            "title": "Document"
+          },
+          {
+            "$ref": "cad.json",
+            "title": "CAD"
+          },
+          {
+            "$ref": "sourcecode.json",
+            "title": "Source Code"
+          }
+        ]
+     }  
 }
