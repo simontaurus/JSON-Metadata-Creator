@@ -1,0 +1,42 @@
+{
+  "title": "Source Code",
+  "type": "object",
+  "required": [
+    "language"
+    "format,
+  ],
+  "properties": {
+    "language": {
+      "type": "string",
+      "enum": [
+        "Python",
+        "C/C++",
+        "Java",
+        "Matlab",
+        "Javascript"
+      ]
+    },
+    "language_version": {
+      "type": "string"
+    },
+    "format": {
+      "type": "string",
+      "enum": [
+        "Text",
+        "Archive"
+      ]
+    },
+    "compiler": {
+      "type": "string"
+    },
+    "compiler_version": {
+      "type": "string"
+    },
+    "IDE": {
+      "type": "string"
+    },
+    "IDE_version": {
+      "type": "string"
+    }
+  }
+}
