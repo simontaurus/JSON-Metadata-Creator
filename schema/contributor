@@ -4,7 +4,7 @@
    "required": [
       "affiliation",
       "name"
-   ]
+   ],
    "properties": {
           "affiliation": {
             "type": "string",
