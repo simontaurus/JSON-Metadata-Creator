@@ -2,10 +2,15 @@
   "title": "Document",
   "type": "object",
   "required": [
-    "type"
+    "type",
+    "format"
   ],
   "properties": {
     "type": {
+      "type": "string",
+      "enum": ["Document"]
+    },
+    "format": {
       "type": "string",
       "enum": [
         "PDF",
