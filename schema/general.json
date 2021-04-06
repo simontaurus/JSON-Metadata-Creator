@@ -76,16 +76,7 @@
     },
     "specific": {
       "title": "Specific",
-      "anyOf": [
-        {
-          "$ref": "document.json",
-          "title": "Document"
-        },
-        {
-          "$ref": "cad.json",
-          "title": "CAD"
-        }
-      ]
+      "$ref": "specifics.json"
     }
   }
 }
