@@ -2,10 +2,10 @@
   "title": "None",
   "type": "object",
   "required": [
-    "type"
+    "file_type"
   ],
   "properties": {
-    "type": {
+    "file_type": {
       "type": "string",
       "enum": ["None"]
     }
