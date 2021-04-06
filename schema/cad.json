@@ -2,15 +2,22 @@
   "title": "CAD",
   "type": "object",
   "required": [
-    "type"
+    "format"
   ],
   "properties": {
-    "type": {
+    "format": {
       "type": "string",
       "enum": [
         "Inventor",
-        "STEP"
+        "STEP",
+        "STL",
+        "STEP",
+        "DXF",
+        "brd"
       ]
+    },
+    "format_version": {
+      "type": "string"
     }
   }
 }
