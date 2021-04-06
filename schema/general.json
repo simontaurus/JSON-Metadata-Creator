@@ -51,55 +51,13 @@
       "title": "Contributors",
       "uniqueItems": true,
       "items": {
-        "type": "object",
         "title": "Contributor",
-        "properties": {
-          "affiliation": {
-            "type": "string",
-            "enum": [
-              "Institution A",
-              "Company B"
-            ],
-            "default": "Institution A"
-          },
-          "name": {
-            "type": "string"
-          }
-        }
-      },
-      "default": [
-        {
-          "affiliation": "Institution A",
-          "name": "Test User"
-        }
-      ]
+        "$ref": "contributor.json"
+      }
     },
     "specifics": {
       "title": "Specifics",
-      "type": "array",
-      "format": "tabs",
-      "items": {
-      "title": "Specific",
-      "headerTemplate": "{{i}} - {{self.file_type}}",
-        "oneOf": [
-          {
-            "$ref": "none.json",
-            "title": "None"
-          },
-          {
-            "$ref": "document.json",
-            "title": "Document"
-          },
-          {
-            "$ref": "cad.json",
-            "title": "CAD"
-          },
-          {
-            "$ref": "sourcecode.json",
-            "title": "Source Code"
-          }
-        ]
-     }   
+      "$ref": "specifics.json"
     }
   }
 }
