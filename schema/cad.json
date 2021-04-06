@@ -2,9 +2,14 @@
   "title": "CAD",
   "type": "object",
   "required": [
+    "type",
     "format"
   ],
   "properties": {
+    "type": {
+      "type": "string",
+      "enum": ["CAD"]
+    },
     "format": {
       "type": "string",
       "enum": [
