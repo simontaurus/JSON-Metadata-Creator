@@ -415,15 +415,15 @@
     })
       
     //add download button
-    jseditor.on('ready', function() {
-      var button = jseditor.root.getButton('Save Result As File', 'save', 'Save Result As File'),
-      button_holder = jseditor.root.theme.getHeaderButtonHolder();
+    jsoneditor.on('ready', function() {
+      var button = jsoneditor.root.getButton('Save Result As File', 'save', 'Save Result As File'),
+      button_holder = jsoneditor.root.theme.getHeaderButtonHolder();
       button_holder.appendChild(button);
-      jseditor.root.header.parentNode.insertBefore(button_holder, jseditor.root.header.nextSibling);
+      jsoneditor.root.header.parentNode.insertBefore(button_holder, jsoneditor.root.header.nextSibling);
 
       button.addEventListener('click', function(e) {
         e.preventDefault();
-        var example = jseditor.getValue(),
+        var example = jsoneditor.getValue(),
         filename = 'metadata.json',
         blob = new Blob([JSON.stringify(example, null, 2)], {
           type: "application/json;charset=utf-8"
