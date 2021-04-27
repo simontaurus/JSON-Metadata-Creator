@@ -413,6 +413,38 @@
       }
       updateDirectLink()
     })
+      
+    //add download button
+    jsoneditor.on('ready', function() {
+      var button = jsoneditor.root.getButton('Save Result As File', 'save', 'Save Result As File'),
+      button_holder = jsoneditor.root.theme.getHeaderButtonHolder();
+      button_holder.appendChild(button);
+      jsoneditor.root.header.parentNode.insertBefore(button_holder, jsoneditor.root.header.nextSibling);
+
+      button.addEventListener('click', function(e) {
+        e.preventDefault();
+        var example = jsoneditor.getValue(),
+        filename = 'metadata.json',
+        blob = new Blob([JSON.stringify(example, null, 2)], {
+          type: "application/json;charset=utf-8"
+        });
+
+        if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+          window.navigator.msSaveOrOpenBlob(blob, filename);
+        } else {
+          var a = document.createElement('a');
+          a.download = filename;
+          a.href = URL.createObjectURL(blob);
+          a.dataset.downloadurl = ['text/plain', a.download, a.href].join(':');
+
+          a.dispatchEvent(new MouseEvent('click', {
+            'view': window,
+            'bubbles': true,
+            'cancelable': false
+          }));
+        }
+      }, false);
+    });
   }
 
   /* ------------------------------------------------------- updateDirectLink */
