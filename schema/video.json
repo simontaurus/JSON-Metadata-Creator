@@ -1,0 +1,43 @@
+{
+  "title": "Video",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "type": "string",
+      "enum": ["Video"]
+    },
+    "file_format": {
+      "type": "string",
+      "enum": [
+        "mp4", 
+        "mpg", 
+        "avi", 
+        "wmv", 
+        "mov"
+      ]
+    },
+    "resolution": {
+      "type": "string",
+      "enum": [
+        "4K", 
+        "FHD", 
+        "HD",
+        "SD"
+      ]
+    },
+    "caption": {
+      "type": "string"
+    },
+    "copy_right": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "e. g. research, documentation, web media, print media, social media, press release"
+    }
+  }
+}
