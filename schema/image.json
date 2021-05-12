@@ -8,7 +8,7 @@
   "properties": {
     "file_type": {
       "type": "string",
-      "enum": ["Document"]
+      "enum": ["Image"]
     },
     "file_format": {
       "type": "string",
