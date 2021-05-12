@@ -1,0 +1,45 @@
+{
+  "title": "Image",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "type": "string",
+      "enum": ["Document"]
+    },
+    "file_format": {
+      "type": "string",
+      "enum": [
+        "jpg", 
+        "png", 
+        "tif", 
+        "ai", 
+        "eps",
+        "svg",
+        "bmp",
+        "pdf"
+      ]
+    },
+    "resolution": {
+      "type": "string",
+      "enum": [
+        "high", 
+        "medium", 
+        "low"
+      ]
+    },
+    "caption": {
+      "type": "string"
+    },
+    "copy_right": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string",
+      "description": "e. g. research, documentation, web media, print media, social media, press release"
+    }
+  }
+}
