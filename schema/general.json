@@ -21,6 +21,11 @@
       "description": "Full path/uri of file location",
       "default": "<uri>"
     },
+    "file_description": {
+      "type": "string",
+      "format": "textarea",
+      "description": "Description of the file"
+    },
     "tags": {
       "type": "array",
       "format": "table",
@@ -54,6 +59,16 @@
         "title": "Contributor",
         "$ref": "contributor.json"
       }
+    },
+    "data_policy": {
+      "type": "string",
+      "enum": [
+        "Internal",
+        "Selected Externals",
+        "Public"
+      ],
+      "description": "Access restrictions of the file",
+      "default": "Institution A"
     },
     "specifics": {
       "title": "Specifics",

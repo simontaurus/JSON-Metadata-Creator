@@ -15,6 +15,14 @@
             "title": "Document"
           },
           {
+            "$ref": "image.json",
+            "title": "Image"
+          },
+          {
+            "$ref": "video.json",
+            "title": "Video"
+          },
+          {
             "$ref": "cad.json",
             "title": "CAD"
           },
