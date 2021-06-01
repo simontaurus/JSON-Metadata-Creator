@@ -1,0 +1,17 @@
+{
+  "title": "Sample Reference",
+  "type": "object",
+  "required": [
+    "file_type",
+    "sample_id"
+  ],
+  "properties": {
+    "file_type": {
+      "type": "string",
+      "enum": ["Sample"]
+    },
+    "sample_id": {
+      "type": "string"
+    }
+  }
+}
