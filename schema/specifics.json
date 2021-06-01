@@ -33,6 +33,10 @@
           {
             "$ref": "sourcecode.json",
             "title": "Source Code"
+          },
+          {
+            "$ref": "sample.json",
+            "title": "Sample Reference"
           }
         ]
      }  
