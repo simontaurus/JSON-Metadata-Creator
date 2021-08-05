@@ -37,6 +37,10 @@
           {
             "$ref": "sample.json",
             "title": "Sample Reference"
+          },
+          {
+            "$ref": "eisdata.json",
+            "title": "EIS data"
           }
         ]
      }  

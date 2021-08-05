@@ -1,0 +1,187 @@
+{
+  "title": "EIS data",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "type": "string",
+      "enum": [
+        "EIS data"
+      ]
+    },
+    "file_format": {
+      "type": "string",
+      "enum": [
+        ".txt",
+        ".dat",
+        ".z (ZView)",
+        ".mpt (ZView & EC-Lab)",
+        ".mpr (EC-Lab)",
+        ".zdat (ZView)",
+        ".mdat (ZView)"
+      ]
+    },
+    "num_header_lines": {
+      "type": "integer",
+      "description": "Number of header lines. Last line is supposed to contain column names. If the file contains no header line choose 0"
+    },
+    "columns": {
+      "type": "array",
+      "format": "table",
+      "title": "Columns",
+      "uniqueItems": false,
+      "items": {
+        "title": "Column",
+        "type": "object",
+        "required": [
+          "header",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "header": {
+            "type": "string"
+          },
+          "name": {
+            "type": "string"
+          },
+          "unit": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "procedure_details": {
+      "type": "object",
+      "properties": {
+        "eis_type": {
+          "type": "string",
+          "enum": [
+            "PEIS",
+            "GEIS",
+            "ORP-EIS",
+            "NFRA"
+          ]
+        },
+        "mode": {
+          "type": "string",
+          "enum": [
+            "Single sine",
+            "Multi sine",
+            "ORP-EIS"
+          ]
+        },
+        "amplitude": {
+          "type": "number",
+          "description": "Amplitude of excitation in mV or mA, depending on eis_type."
+        },
+        "frequency_range": {
+          "type": "object",
+          "properties": {
+            "initial_frequency": {
+              "type": "number",
+              "description": "Starting frequency in Hz"
+            },
+            "final_frequency": {
+              "type": "number",
+              "description": "End frequency in Hz"
+            },
+            "step_size": {
+              "type": "object",
+              "properties": {
+                "num_points": {
+                  "type": "integer",
+                  "description": "number of points"
+                },
+                "boundary_option": {
+                  "type": "string",
+                  "enum": [
+                    "per decade",
+                    "from fi to ff"
+                  ],
+                  "description": "with"
+                },
+                "spacing_option": {
+                  "type": "string",
+                  "enum": [
+                    "logarithmic",
+                    "linear"
+                  ],
+                  "description": "spacing"
+                }
+              }
+            }
+          }
+        },
+        "averaging": {
+          "type": "number",
+          "description": "Number of repetitions averaged for a single data point in the file."
+        },
+        "drift_correction": {
+          "type": "boolean",
+          "description": "If drift correction is enabled, frequency will be swept downwards and upwards."
+        }
+      }
+    },
+    "setup_details": {
+      "type": "object",
+      "properties": {
+        "control": {
+          "type": "string",
+          "enum": [
+            "WE vs. CE",
+            "WE vs. RE",
+            "CE vs. RE"
+          ]
+        }
+      }
+    },
+    "conditions": {
+      "type": "object",
+      "properties": {
+        "ambient_temperature": {
+          "type": "number",
+          "description": "in degree Celsius"
+        },
+        "sample_state": {
+          "type": "array",
+          "format": "table",
+          "title": "Sample state",
+          "uniqueItems": true,
+          "items": {
+            "title": "State",
+            "type": "object",
+            "required": [
+              "variable",
+              "value"
+            ],
+            "properties": {
+              "variable": {
+                "type": "string",
+                "enum": [
+                  "Time at rest / s",
+                  "Soc / %",
+                  "Cell voltage / V",
+                  "Constant dc voltage / V",
+                  "Constant dc current / mA"
+                ]
+              },
+              "value": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
