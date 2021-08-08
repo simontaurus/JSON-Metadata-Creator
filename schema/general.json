@@ -21,7 +21,18 @@
     "file_name": {
       "type": "string",
       "description": "Name of the file itself",
-      "default": "<file name>"
+      "default": "<file name>",
+      "title": "File name",
+      "options": {
+        "infoText": "see <a href='https://onto-wiki.eu/wiki/GPO_ee8c37fd_9f2c_4047_b25d_4149894bd7c0'>OntoWiki</a>"
+      }
+    },
+    "file_name_iri": {
+      "type": "url",
+      "default": "https://gitlab.cc-asp.fraunhofer.de/ISC-Public/ISC-Digital/ontology/GPO#GPO_ee8c37fd_9f2c_4047_b25d_4149894bd7c0",
+      "options": {
+        "hidden": true
+      }
     },
     "full_path": {
       "type": "string",
