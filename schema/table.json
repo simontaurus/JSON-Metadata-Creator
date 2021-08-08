@@ -1,0 +1,51 @@
+{
+  "title": "Table",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "type": "string",
+      "enum": ["Table"]
+    },
+    "file_format": {
+      "type": "string",
+      "enum": [
+        "CSV",
+        "Excel",
+        "Origin"
+      ]
+    },
+    "columns": {
+      "type": "array",
+      "format": "table",
+      "title": "Columns",
+      "uniqueItems": false,
+      "items": {
+         "title": "Column",
+         "type": "object",
+         "required": [
+            "header",
+            "name",
+            "description"
+         ],
+         "properties": {
+                "header": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "unit": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
+          }
+      }
+    }
+  }
+}
