@@ -37,7 +37,7 @@
       "options": {
         "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
       },
-      "description": "header: the name of the column as specified in the header\nname: the name of the column to be used after import",
+      "description": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text",
       "items": {
         "title": "Column",
         "type": "object",
