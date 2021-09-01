@@ -18759,7 +18759,7 @@ var StringEditor = /*#__PURE__*/function (_AbstractEditor) {
     value: function disable(alwaysDisabled) {
       if (alwaysDisabled) this.always_disabled = true;
       this.input.disabled = true;
-      //this.input.setAttribute('readonly', 'true');
+      this.input.setAttribute('readonly', 'true');
 
       _get(_getPrototypeOf(StringEditor.prototype), "disable", this).call(this);
     }
