@@ -3,7 +3,7 @@
  * * @name JSON Editor
  * * @description JSON Schema Based Editor
  * * This library is the continuation of jdorn's great work (see also https://github.com/jdorn/json-editor/issues/800)
- * * @version "2.5.3"
+ * * @version "2.5.4"
  * * @author Jeremy Dorn
  * * @see https://github.com/jdorn/json-editor/
  * * @see https://github.com/json-editor/json-editor
@@ -6043,6 +6043,7 @@ var JSONEditor = /*#__PURE__*/function () {
     this.schema = this.options.schema;
     this.template = this.options.template;
     this.translate = this.options.translate || JSONEditor.defaults.translate;
+    this.translateProperty = this.options.translateProperty || JSONEditor.defaults.translateProperty;
     this.uuid = 0;
     this.__data = {};
     var themeName = this.options.theme || JSONEditor.defaults.theme;
@@ -6598,6 +6599,11 @@ languages.en = {
   error_enum: 'Value must be one of the enumerated values',
 
   /**
+  * When a value is not equal to the constant
+  */
+  error_const: 'Value must be the constant value',
+
+  /**
   * When a value doesn't validate any schema of a 'anyOf' combination
   */
   error_anyOf: 'Value must validate against at least one of the provided schemas',
@@ -6739,6 +6745,12 @@ languages.en = {
   * @variables This key takes one variable: The name of the invalid property
   */
   error_property_names_enum_mismatch: 'Property name {{0}} does not match any enum values',
+
+  /**
+  * When there is a propertyName that sets a const and a property does not match the const value
+  * @variables This key takes one variable: The name of the invalid property
+  */
+  error_property_names_const_mismatch: 'Property name {{0}} does not match the const value',
 
   /**
   * When there is a propertyName that sets a pattern and a property name does not match the pattern
@@ -6967,6 +6979,7 @@ Object.entries(editors).forEach(function (_ref) {
 /* Default upload handler */
 
 function upload(type, file, cbs) {
+  // eslint-disable-next-line no-console
   console.log('Upload handler required for upload editor');
 }
 /* String translate function */
@@ -6984,6 +6997,12 @@ function translate(key, variables) {
   }
 
   return string;
+}
+/* Text element translate function */
+
+
+function translateProperty(text, variables) {
+  return text;
 }
 /* Default options when initializing JSON Editor */
 
@@ -7010,7 +7029,8 @@ var defaults = {
   custom_validators: custom_validators,
   default_language: default_language,
   language: language,
-  translate: translate
+  translate: translate,
+  translateProperty: translateProperty
 };
 
 /***/ }),
@@ -7149,6 +7169,7 @@ var AbstractEditor = /*#__PURE__*/function () {
     this.template_engine = this.jsoneditor.template;
     this.iconlib = this.jsoneditor.iconlib;
     this.translate = this.jsoneditor.translate || this.defaults.translate;
+    this.translateProperty = this.jsoneditor.translateProperty || this.defaults.translateProperty;
     this.original_schema = options.schema;
     this.schema = this.jsoneditor.expandSchema(this.original_schema);
     this.active = true;
@@ -7287,6 +7308,10 @@ var AbstractEditor = /*#__PURE__*/function () {
 
       var displayMode = this.dependenciesFulfilled ? 'block' : 'none';
 
+      if (this.options.hidden) {
+        displayMode = 'none';
+      }
+
       if (wrapper.tagName === 'TD') {
         Object.keys(wrapper.childNodes).forEach(function (child) {
           return wrapper.childNodes[child].style.display = displayMode;
@@ -7308,9 +7333,8 @@ var AbstractEditor = /*#__PURE__*/function () {
       if (!editor || !editor.dependenciesFulfilled) {
         this.dependenciesFulfilled = false;
       } else if (Array.isArray(choices)) {
-        choices.some(function (choice) {
+        this.dependenciesFulfilled = choices.some(function (choice) {
           if (value === choice) {
-            _this3.dependenciesFulfilled = true;
             return true;
           }
         });
@@ -7648,7 +7672,12 @@ var AbstractEditor = /*#__PURE__*/function () {
   }, {
     key: "getHeaderText",
     value: function getHeaderText(titleOnly) {
-      if (this.header_text) return this.header_text;else if (titleOnly) return this.schema.title;else return this.getTitle();
+      if (this.header_text) return this.header_text;else if (titleOnly) return this.translateProperty(this.schema.title);else return this.getTitle();
+    }
+  }, {
+    key: "getPathDepth",
+    value: function getPathDepth() {
+      return this.path.split('.').length;
     }
   }, {
     key: "cleanText",
@@ -7773,7 +7802,7 @@ var AbstractEditor = /*#__PURE__*/function () {
   }, {
     key: "getTitle",
     value: function getTitle() {
-      return this.schema.title || this.key;
+      return this.translateProperty(this.schema.title || this.key);
     }
   }, {
     key: "enable",
@@ -8379,13 +8408,19 @@ var ArrayEditor = /*#__PURE__*/function (_AbstractEditor) {
       if (!this.options.compact) {
         this.header = document.createElement('label');
         this.header.textContent = this.getTitle();
-        this.title = this.theme.getHeader(this.header);
+        this.title = this.theme.getHeader(this.header, this.getPathDepth());
         this.container.appendChild(this.title);
+
+        if (this.options.infoText) {
+          this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
+          this.container.appendChild(this.infoButton);
+        }
+
         this.title_controls = this.theme.getHeaderButtonHolder();
         this.title.appendChild(this.title_controls);
 
         if (this.schema.description) {
-          this.description = this.theme.getDescription(this.schema.description);
+          this.description = this.theme.getDescription(this.translateProperty(this.schema.description));
           this.container.appendChild(this.description);
         }
 
@@ -8421,7 +8456,7 @@ var ArrayEditor = /*#__PURE__*/function (_AbstractEditor) {
         }
       } else {
         /* compact mode */
-        this.title = this.theme.getHeader('');
+        this.title = this.theme.getHeader('', this.getPathDepth());
         this.container.appendChild(this.title);
         this.panel = this.theme.getIndentedPanel();
         this.container.appendChild(this.panel);
@@ -8451,7 +8486,7 @@ var ArrayEditor = /*#__PURE__*/function (_AbstractEditor) {
       if (!this.item_title) {
         if (this.schema.items && !Array.isArray(this.schema.items)) {
           var tmp = this.jsoneditor.expandRefs(this.schema.items);
-          this.item_title = tmp.title || this.translate('default_array_item_title');
+          this.item_title = this.translateProperty(tmp.title) || this.translate('default_array_item_title');
         } else {
           this.item_title = this.translate('default_array_item_title');
         }
@@ -8491,7 +8526,7 @@ var ArrayEditor = /*#__PURE__*/function (_AbstractEditor) {
 
       schema = this.jsoneditor.expandRefs(schema);
       this.item_info[stringified] = {
-        title: schema.title || this.translate('default_array_item_title'),
+        title: this.translateProperty(schema.title) || this.translate('default_array_item_title'),
         "default": schema["default"],
         width: 12,
         child_editors: schema.properties || schema.items
@@ -10045,6 +10080,7 @@ var AutocompleteEditor = /*#__PURE__*/function (_StringEditor) {
         /* single property options from schema "options.autocomplete" */
         options = this.expandCallbacks('autocomplete', Object(_utilities_js__WEBPACK_IMPORTED_MODULE_17__["extend"])({}, {
           search: function search(jseditor, input) {
+            // eslint-disable-next-line no-console
             console.log("No \"search\" callback defined for autocomplete in property \"".concat(jseditor.key, "\""));
             return [];
           },
@@ -10096,43 +10132,49 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_symbol_iterator__WEBPACK_IMPORTED_MODULE_2__);
 /* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! core-js/modules/es.array.concat */ "./node_modules/core-js/modules/es.array.concat.js");
 /* harmony import */ var core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_3___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_concat__WEBPACK_IMPORTED_MODULE_3__);
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
-/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_4__);
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
-/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_5__);
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
-/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_6__);
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
-/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_7__);
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
-/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_8__);
-/* harmony import */ var core_js_modules_es_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.get-own-property-descriptor */ "./node_modules/core-js/modules/es.object.get-own-property-descriptor.js");
-/* harmony import */ var core_js_modules_es_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_9__);
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_10__);
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
-/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_11__);
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
-/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_12__);
-/* harmony import */ var core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.parse-int */ "./node_modules/core-js/modules/es.parse-int.js");
-/* harmony import */ var core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_13__);
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
-/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_14__);
-/* harmony import */ var core_js_modules_es_reflect_get__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.reflect.get */ "./node_modules/core-js/modules/es.reflect.get.js");
-/* harmony import */ var core_js_modules_es_reflect_get__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_get__WEBPACK_IMPORTED_MODULE_15__);
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
-/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_16__);
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
-/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_17__);
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
-/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_18__);
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! core-js/modules/es.string.match */ "./node_modules/core-js/modules/es.string.match.js");
-/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_19__);
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
-/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_20__);
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
-/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_21__);
-/* harmony import */ var _editor_js__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! ../editor.js */ "./src/editor.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! core-js/modules/es.array.includes */ "./node_modules/core-js/modules/es.array.includes.js");
+/* harmony import */ var core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_includes__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! core-js/modules/es.array.iterator */ "./node_modules/core-js/modules/es.array.iterator.js");
+/* harmony import */ var core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_iterator__WEBPACK_IMPORTED_MODULE_5__);
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! core-js/modules/es.array.splice */ "./node_modules/core-js/modules/es.array.splice.js");
+/* harmony import */ var core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_6___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_array_splice__WEBPACK_IMPORTED_MODULE_6__);
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(/*! core-js/modules/es.date.to-string */ "./node_modules/core-js/modules/es.date.to-string.js");
+/* harmony import */ var core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_7___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_date_to_string__WEBPACK_IMPORTED_MODULE_7__);
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(/*! core-js/modules/es.object.create */ "./node_modules/core-js/modules/es.object.create.js");
+/* harmony import */ var core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_create__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(/*! core-js/modules/es.object.define-property */ "./node_modules/core-js/modules/es.object.define-property.js");
+/* harmony import */ var core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_9___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_define_property__WEBPACK_IMPORTED_MODULE_9__);
+/* harmony import */ var core_js_modules_es_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_10__ = __webpack_require__(/*! core-js/modules/es.object.get-own-property-descriptor */ "./node_modules/core-js/modules/es.object.get-own-property-descriptor.js");
+/* harmony import */ var core_js_modules_es_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_10___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_own_property_descriptor__WEBPACK_IMPORTED_MODULE_10__);
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_11__ = __webpack_require__(/*! core-js/modules/es.object.get-prototype-of */ "./node_modules/core-js/modules/es.object.get-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_11___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_get_prototype_of__WEBPACK_IMPORTED_MODULE_11__);
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_12__ = __webpack_require__(/*! core-js/modules/es.object.set-prototype-of */ "./node_modules/core-js/modules/es.object.set-prototype-of.js");
+/* harmony import */ var core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_12___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_set_prototype_of__WEBPACK_IMPORTED_MODULE_12__);
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__ = __webpack_require__(/*! core-js/modules/es.object.to-string */ "./node_modules/core-js/modules/es.object.to-string.js");
+/* harmony import */ var core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_object_to_string__WEBPACK_IMPORTED_MODULE_13__);
+/* harmony import */ var core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_14__ = __webpack_require__(/*! core-js/modules/es.parse-int */ "./node_modules/core-js/modules/es.parse-int.js");
+/* harmony import */ var core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_14___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_parse_int__WEBPACK_IMPORTED_MODULE_14__);
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_15__ = __webpack_require__(/*! core-js/modules/es.reflect.construct */ "./node_modules/core-js/modules/es.reflect.construct.js");
+/* harmony import */ var core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_15___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_construct__WEBPACK_IMPORTED_MODULE_15__);
+/* harmony import */ var core_js_modules_es_reflect_get__WEBPACK_IMPORTED_MODULE_16__ = __webpack_require__(/*! core-js/modules/es.reflect.get */ "./node_modules/core-js/modules/es.reflect.get.js");
+/* harmony import */ var core_js_modules_es_reflect_get__WEBPACK_IMPORTED_MODULE_16___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_reflect_get__WEBPACK_IMPORTED_MODULE_16__);
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_17__ = __webpack_require__(/*! core-js/modules/es.regexp.exec */ "./node_modules/core-js/modules/es.regexp.exec.js");
+/* harmony import */ var core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_17___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_exec__WEBPACK_IMPORTED_MODULE_17__);
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_18__ = __webpack_require__(/*! core-js/modules/es.regexp.to-string */ "./node_modules/core-js/modules/es.regexp.to-string.js");
+/* harmony import */ var core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_18___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_regexp_to_string__WEBPACK_IMPORTED_MODULE_18__);
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_19__ = __webpack_require__(/*! core-js/modules/es.string.includes */ "./node_modules/core-js/modules/es.string.includes.js");
+/* harmony import */ var core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_19___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_includes__WEBPACK_IMPORTED_MODULE_19__);
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_20__ = __webpack_require__(/*! core-js/modules/es.string.iterator */ "./node_modules/core-js/modules/es.string.iterator.js");
+/* harmony import */ var core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_20___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_iterator__WEBPACK_IMPORTED_MODULE_20__);
+/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_21__ = __webpack_require__(/*! core-js/modules/es.string.match */ "./node_modules/core-js/modules/es.string.match.js");
+/* harmony import */ var core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_21___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_match__WEBPACK_IMPORTED_MODULE_21__);
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_22__ = __webpack_require__(/*! core-js/modules/es.string.split */ "./node_modules/core-js/modules/es.string.split.js");
+/* harmony import */ var core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_22___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_es_string_split__WEBPACK_IMPORTED_MODULE_22__);
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_23__ = __webpack_require__(/*! core-js/modules/web.dom-collections.iterator */ "./node_modules/core-js/modules/web.dom-collections.iterator.js");
+/* harmony import */ var core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_23___default = /*#__PURE__*/__webpack_require__.n(core_js_modules_web_dom_collections_iterator__WEBPACK_IMPORTED_MODULE_23__);
+/* harmony import */ var _editor_js__WEBPACK_IMPORTED_MODULE_24__ = __webpack_require__(/*! ../editor.js */ "./src/editor.js");
+
+
 
 
 
@@ -10240,8 +10282,8 @@ var Base64Editor = /*#__PURE__*/function (_AbstractEditor) {
     value: function build() {
       var _this2 = this;
 
-      this.title = this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (!this.options.compact) this.title = this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       /* Input that holds the base64 string */
 
       this.input = this.theme.getFormInputField('hidden');
@@ -10313,7 +10355,7 @@ var Base64Editor = /*#__PURE__*/function (_AbstractEditor) {
         });
       }
 
-      this.preview = this.theme.getFormInputDescription(this.schema.description);
+      this.preview = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
       this.container.appendChild(this.preview);
       this.control = this.theme.getFormControl(this.label, this.uploader || this.input, this.preview, this.infoButton);
       this.container.appendChild(this.control);
@@ -10364,7 +10406,7 @@ var Base64Editor = /*#__PURE__*/function (_AbstractEditor) {
     key: "setValue",
     value: function setValue(val) {
       if (this.value !== val) {
-        this.value = val;
+        if (this.schema.readOnly && this.schema["enum"] && !this.schema["enum"].includes(val)) this.value = this.schema["enum"][0];else this.value = val;
         this.input.value = this.value;
         this.refreshPreview();
         this.onChange();
@@ -10383,7 +10425,7 @@ var Base64Editor = /*#__PURE__*/function (_AbstractEditor) {
   }]);
 
   return Base64Editor;
-}(_editor_js__WEBPACK_IMPORTED_MODULE_22__["AbstractEditor"]);
+}(_editor_js__WEBPACK_IMPORTED_MODULE_24__["AbstractEditor"]);
 
 /***/ }),
 
@@ -10523,7 +10565,7 @@ var ButtonEditor = /*#__PURE__*/function (_AbstractEditor) {
 
       /* single property options from schema "options.button" */
 
-      var title = this.schema.title || this.key;
+      var title = this.translateProperty(this.schema.title) || this.key;
       var options = this.expandCallbacks('button', Object(_utilities_js__WEBPACK_IMPORTED_MODULE_20__["extend"])({}, {
         icon: '',
         validated: false,
@@ -10537,6 +10579,7 @@ var ButtonEditor = /*#__PURE__*/function (_AbstractEditor) {
 
       if (this.schema.readOnly || this.schema.readonly || this.schema.template) {
         this.disable(true);
+        this.input.setAttribute('readonly', 'true');
       }
       /* Set custom attributes on input element. Parameter is array of protected keys. Empty array if none. */
 
@@ -10750,8 +10793,8 @@ var CheckboxEditor = /*#__PURE__*/function (_AbstractEditor) {
         this.label.htmlFor = this.formname;
       }
 
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText && !this.options.compact) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText && !this.options.compact) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       if (this.options.compact) this.container.classList.add('compact');
       this.input = this.theme.getCheckbox();
       this.input.id = this.formname;
@@ -10759,6 +10802,7 @@ var CheckboxEditor = /*#__PURE__*/function (_AbstractEditor) {
 
       if (this.schema.readOnly || this.schema.readonly) {
         this.disable(true);
+        this.input.disabled = true;
       }
 
       this.input.addEventListener('change', function (e) {
@@ -12636,7 +12680,7 @@ var InfoEditor = /*#__PURE__*/function (_ButtonEditor) {
   }, {
     key: "getTitle",
     value: function getTitle() {
-      return this.schema.title;
+      return this.translateProperty(this.schema.title);
     }
   }, {
     key: "getNumColumns",
@@ -13583,7 +13627,11 @@ var MultipleEditor = /*#__PURE__*/function (_AbstractEditor) {
           var filterError = function filterError(newErrors, error) {
             if (error.path.startsWith(check) || error.path === check.substr(0, error.path.length)) {
               var newError = Object(_utilities_js__WEBPACK_IMPORTED_MODULE_30__["extend"])({}, error);
-              newError.path = _this5.path + newError.path.substr(check.length);
+
+              if (error.path.startsWith(check)) {
+                newError.path = _this5.path + newError.path.substr(check.length);
+              }
+
               newErrors.push(newError);
             }
 
@@ -13815,8 +13863,8 @@ var MultiSelectEditor = /*#__PURE__*/function (_AbstractEditor) {
 
       var i;
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       if (this.options.compact) this.container.classList.add('compact');
 
       if (!this.schema.format && this.option_keys.length < 8 || this.schema.format === 'checkbox') {
@@ -14761,7 +14809,7 @@ var ObjectEditor = /*#__PURE__*/function (_AbstractEditor) {
 
           /* tabs_holder has 2 childs, [0]: ul.nav.nav-tabs and [1]: div.tab-content */
 
-          var newTabsHolder = this.theme.getTopTabHolder(this.schema.title);
+          var newTabsHolder = this.theme.getTopTabHolder(this.translateProperty(this.schema.title));
           /* child [1] of previous, stores panes */
 
           var newTabPanesContainer = this.theme.getTopTabContentHolder(newTabsHolder);
@@ -15151,7 +15199,7 @@ var ObjectEditor = /*#__PURE__*/function (_AbstractEditor) {
           this.header.textContent = this.getTitle();
         }
 
-        this.title = this.theme.getHeader(this.header);
+        this.title = this.theme.getHeader(this.header, this.getPathDepth());
         this.title.classList.add('je-object__title');
         this.controls = this.theme.getButtonHolder();
         this.controls.classList.add('je-object__controls');
@@ -15241,7 +15289,7 @@ var ObjectEditor = /*#__PURE__*/function (_AbstractEditor) {
         /* Description */
 
         if (this.schema.description) {
-          this.description = this.theme.getDescription(this.schema.description);
+          this.description = this.theme.getDescription(this.translateProperty(this.schema.description));
           this.container.appendChild(this.description);
         }
         /* Validation error placeholder area */
@@ -15258,11 +15306,11 @@ var ObjectEditor = /*#__PURE__*/function (_AbstractEditor) {
         this.row_container = this.theme.getGridContainer();
 
         if (isCategoriesFormat) {
-          this.tabs_holder = this.theme.getTopTabHolder(this.getValidId(this.schema.title));
+          this.tabs_holder = this.theme.getTopTabHolder(this.getValidId(this.translateProperty(this.schema.title)));
           this.tabPanesContainer = this.theme.getTopTabContentHolder(this.tabs_holder);
           this.editor_holder.appendChild(this.tabs_holder);
         } else {
-          this.tabs_holder = this.theme.getTabHolder(this.getValidId(this.schema.title));
+          this.tabs_holder = this.theme.getTabHolder(this.getValidId(this.translateProperty(this.schema.title)));
           this.tabPanesContainer = this.theme.getTabContentHolder(this.tabs_holder);
           this.editor_holder.appendChild(this.row_container);
         }
@@ -15742,6 +15790,11 @@ var ObjectEditor = /*#__PURE__*/function (_AbstractEditor) {
       var _this10 = this;
 
       this.value = {};
+
+      if (!this.editors) {
+        return;
+      }
+
       Object.keys(this.editors).forEach(function (i) {
         if (_this10.editors[i].isActive()) {
           _this10.value[i] = _this10.editors[i].getValue();
@@ -15858,9 +15911,14 @@ var ObjectEditor = /*#__PURE__*/function (_AbstractEditor) {
           _this12.addObjectProperty(i);
 
           editor.setValue(value[i], initial);
+          editor.activate();
           /* Otherwise, remove value unless this is the initial set or it's required */
         } else if (!initial && !_this12.isRequiredObject(editor)) {
-          _this12.removeObjectProperty(i);
+          if (_this12.jsoneditor.options.show_opt_in || _this12.options.show_opt_in) {
+            editor.deactivate();
+          } else {
+            _this12.removeObjectProperty(i);
+          }
           /* Otherwise, set the value to the default */
 
         } else {
@@ -16054,8 +16112,8 @@ var RadioEditor = /*#__PURE__*/function (_SelectEditor) {
 
       this.label = '';
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       if (this.options.compact) this.container.classList.add('compact');
       this.radioContainer = document.createElement('div');
       this.radioGroup = [];
@@ -16088,6 +16146,12 @@ var RadioEditor = /*#__PURE__*/function (_SelectEditor) {
 
       if (this.schema.readOnly || this.schema.readonly) {
         this.disable(true);
+
+        for (var j = 0; j < this.radioGroup.length; j++) {
+          this.radioGroup[j].disabled = true;
+        }
+
+        this.radioContainer.classList.add('readonly');
       }
 
       var radioContainerWrapper = this.theme.getContainer();
@@ -16508,7 +16572,7 @@ var SelectEditor = /*#__PURE__*/function (_AbstractEditor) {
       var sanitized = this.typecast(value);
       var haveToUseDefaultValue = !!this.jsoneditor.options.use_default_values || typeof this.schema["default"] !== 'undefined';
 
-      if (!this.enum_values.includes(sanitized) || initial && !this.isRequired() && !haveToUseDefaultValue) {
+      if (this.enum_options.length > 0 && !this.enum_values.includes(sanitized) || initial && !this.isRequired() && !haveToUseDefaultValue) {
         sanitized = this.enum_values[0];
       }
 
@@ -16579,7 +16643,7 @@ var SelectEditor = /*#__PURE__*/function (_AbstractEditor) {
         var display = this.schema.options && this.schema.options.enum_titles || [];
         this.schema["enum"].forEach(function (option, i) {
           _this.enum_options[i] = "".concat(option);
-          _this.enum_display[i] = "".concat(display[i] || option);
+          _this.enum_display[i] = "".concat(_this.translateProperty(display[i]) || option);
           _this.enum_values[i] = _this.typecast(option);
         });
 
@@ -16674,14 +16738,15 @@ var SelectEditor = /*#__PURE__*/function (_AbstractEditor) {
       var _this2 = this;
 
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       if (this.options.compact) this.container.classList.add('compact');
       this.input = this.theme.getSelectInput(this.enum_options, false);
       this.theme.setSelectOptions(this.input, this.enum_options, this.enum_display);
 
       if (this.schema.readOnly || this.schema.readonly) {
         this.disable(true);
+        this.input.disabled = true;
       }
       /* Set custom attributes on input element. Parameter is array of protected keys. Empty array if none. */
 
@@ -17517,7 +17582,7 @@ var SignatureEditor = /*#__PURE__*/function (_StringEditor) {
       var _this = this;
 
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
       var formname = this.formname.replace(/\W/g, '');
 
       if (typeof SignaturePad === 'function') {
@@ -18009,8 +18074,8 @@ var StarratingEditor = /*#__PURE__*/function (_StringEditor) {
       var _this = this;
 
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       if (this.options.compact) this.container.classList.add('compact');
       this.ratingContainer = document.createElement('div');
       this.ratingContainer.classList.add('starrating');
@@ -18070,6 +18135,12 @@ var StarratingEditor = /*#__PURE__*/function (_StringEditor) {
 
       if (this.schema.readOnly || this.schema.readonly) {
         this.disable(true);
+
+        for (var j = 0; j < this.radioGroup.length; j++) {
+          this.radioGroup[j].disabled = true;
+        }
+
+        this.ratingContainer.classList.add('readonly');
       }
 
       var ratingsContainerWrapper = this.theme.getContainer();
@@ -18493,8 +18564,8 @@ var StringEditor = /*#__PURE__*/function (_AbstractEditor) {
       var _this = this;
 
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       this.format = this.schema.format;
 
       if (!this.format && this.schema.media && this.schema.media.type) {
@@ -18558,6 +18629,7 @@ var StringEditor = /*#__PURE__*/function (_AbstractEditor) {
 
       if (this.schema.readOnly || this.schema.readonly || this.schema.template) {
         this.disable(true);
+        this.input.setAttribute('readonly', 'true');
       }
       /* Set custom attributes on input element. Parameter is array of protected keys. Empty array if none. */
 
@@ -18759,7 +18831,6 @@ var StringEditor = /*#__PURE__*/function (_AbstractEditor) {
     value: function disable(alwaysDisabled) {
       if (alwaysDisabled) this.always_disabled = true;
       this.input.disabled = true;
-      //this.input.setAttribute('readonly', 'true');
 
       _get(_getPrototypeOf(StringEditor.prototype), "disable", this).call(this);
     }
@@ -19005,6 +19076,7 @@ var TableEditor = /*#__PURE__*/function (_ArrayEditor) {
       this.item_default = itemSchema["default"] || null;
       this.item_has_child_editors = itemSchema.properties || itemSchema.items;
       this.width = 12;
+      this.array_controls_top = this.options.array_controls_top || this.jsoneditor.options.array_controls_top;
 
       _get(_getPrototypeOf(TableEditor.prototype), "preBuild", this).call(this);
     }
@@ -19028,13 +19100,19 @@ var TableEditor = /*#__PURE__*/function (_ArrayEditor) {
       if (!this.options.compact) {
         this.header = document.createElement('label');
         this.header.textContent = this.getTitle();
-        this.title = this.theme.getHeader(this.header);
+        this.title = this.theme.getHeader(this.header, this.getPathDepth());
         this.container.appendChild(this.title);
+
+        if (this.options.infoText) {
+          this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
+          this.container.appendChild(this.infoButton);
+        }
+
         this.title_controls = this.theme.getHeaderButtonHolder();
         this.title.appendChild(this.title_controls);
 
         if (this.schema.description) {
-          this.description = this.theme.getDescription(this.schema.description);
+          this.description = this.theme.getDescription(this.translateProperty(this.schema.description));
           this.container.appendChild(this.description);
         }
 
@@ -19049,7 +19127,12 @@ var TableEditor = /*#__PURE__*/function (_ArrayEditor) {
 
       this.panel.appendChild(this.table);
       this.controls = this.theme.getButtonHolder();
-      this.panel.appendChild(this.controls);
+
+      if (this.array_controls_top) {
+        this.title.appendChild(this.controls);
+      } else {
+        this.panel.appendChild(this.controls);
+      }
 
       if (this.item_has_child_editors) {
         var ce = tmp.getChildEditors();
@@ -19312,7 +19395,7 @@ var TableEditor = /*#__PURE__*/function (_ArrayEditor) {
         this.rows[i].movedown_button = this._createMoveDownButton(i, controlsHolder);
       }
 
-      if (value) this.rows[i].setValue(value);
+      if (typeof value !== 'undefined') this.rows[i].setValue(value);
     }
   }, {
     key: "_createDeleteButton",
@@ -19701,8 +19784,8 @@ var UploadEditor = /*#__PURE__*/function (_AbstractEditor) {
       var _this = this;
 
       if (!this.options.compact) this.header = this.label = this.theme.getFormInputLabel(this.getTitle(), this.isRequired());
-      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.schema.description);
-      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.options.infoText);
+      if (this.schema.description) this.description = this.theme.getFormInputDescription(this.translateProperty(this.schema.description));
+      if (this.options.infoText) this.infoButton = this.theme.getInfoButton(this.translateProperty(this.options.infoText));
       /* Editor options */
 
       this.options = this.expandCallbacks('upload', Object(_utilities_js__WEBPACK_IMPORTED_MODULE_27__["extend"])({}, {
@@ -19923,6 +20006,7 @@ var UploadEditor = /*#__PURE__*/function (_AbstractEditor) {
         };
 
         img.onerror = function (error) {
+          // eslint-disable-next-line no-console
           console.error('upload error', error, error.currentTarget);
         };
 
@@ -20203,6 +20287,7 @@ var UuidEditor = /*#__PURE__*/function (_StringEditor) {
 
 
       this.disable(true);
+      this.input.setAttribute('readonly', 'true');
     }
   }, {
     key: "sanitize",
@@ -21630,6 +21715,7 @@ var SchemaLoader = /*#__PURE__*/function () {
 
       if (!this.refs[ref]) {
         /* if reference not found */
+        // eslint-disable-next-line no-console
         console.warn("reference:'".concat(ref, "' not found!"));
       } else if (recurseAllOf && Object(_utilities_js__WEBPACK_IMPORTED_MODULE_30__["hasOwnProperty"])(this.refs[ref], 'allOf')) {
         var allOf = this.refs[ref].allOf;
@@ -21740,11 +21826,19 @@ var SchemaLoader = /*#__PURE__*/function () {
           mergeRefs(_this11._getExternalRefs(value, fetchUrl));
         }
       });
+
+      if (schema.id && typeof schema.id === 'string' && schema.id.substr(0, 4) === 'urn:') {
+        this.refs[schema.id] = schema;
+      } else if (schema.$id && typeof schema.$id === 'string' && schema.$id.substr(0, 4) === 'urn:') {
+        this.refs[schema.$id] = schema;
+      }
+
       return refs;
     }
   }, {
     key: "_getFileBase",
     value: function _getFileBase(location) {
+      if (!location) return '/';
       var ajaxBase = this.options.ajaxBase;
       return typeof ajaxBase === 'undefined' ? this._getFileBaseFromFileLocation(location) : ajaxBase;
     }
@@ -21756,9 +21850,22 @@ var SchemaLoader = /*#__PURE__*/function () {
       return "".concat(pathItems.join('/'), "/");
     }
   }, {
-    key: "_isLocalUrl",
-    value: function _isLocalUrl(url, fileBase) {
-      return fileBase !== url.substr(0, fileBase.length) && url.substr(0, 4) !== 'http' && url.substr(0, 5) !== 'blob:' && url.substr(0, 5) !== 'data:' && url.substr(0, 1) !== '/';
+    key: "_joinUrl",
+    value: function _joinUrl(url, fileBase) {
+      var fetchUrl = url;
+
+      if (url.substr(0, 7) !== 'http://' && url.substr(0, 8) !== 'https://' && url.substr(0, 5) !== 'blob:' && url.substr(0, 5) !== 'data:' && url.substr(0, 1) !== '#' && url.substr(0, 1) !== '/') {
+        fetchUrl = fileBase + url;
+      } // strip #fragment from URI, so json pointers resolve correctly #928
+
+
+      if (fetchUrl.indexOf('#') > 0) fetchUrl = fetchUrl.substr(0, fetchUrl.indexOf('#'));
+      return fetchUrl;
+    }
+  }, {
+    key: "_isUniformResourceName",
+    value: function _isUniformResourceName(uri) {
+      return uri.substr(0, 4) === 'urn:';
     }
   }, {
     key: "_loadExternalRefs",
@@ -21767,20 +21874,77 @@ var SchemaLoader = /*#__PURE__*/function () {
 
       var refs = this._getExternalRefs(schema, fetchUrl);
 
-      var done = 0;
+      var done = false;
       var waiting = 0;
-      var callbackFired = false;
-      Object.keys(refs).forEach(function (url) {
-        if (_this12.refs[url]) return;
-        if (!_this12.options.ajax) throw new Error("Must set ajax option to true to load external ref ".concat(url));
-        _this12.refs[url] = 'loading';
-        waiting++; // strip #fragment from URI, so json pointers resolve correctly #928
+      Object.keys(refs).forEach(function (uri) {
+        if (_this12.refs[uri]) return;
 
-        var fetchUrl = _this12._isLocalUrl(url, fileBase) ? fileBase + url : url;
-        if (fetchUrl.indexOf('#') > 0) fetchUrl = fetchUrl.substr(0, fetchUrl.indexOf('#'));
+        if (_this12._isUniformResourceName(uri)) {
+          _this12.refs[uri] = 'loading';
+          waiting++;
+          var urnResolver = _this12.options.urn_resolver;
+          var urn = uri;
+
+          if (typeof urnResolver !== 'function') {
+            // eslint-disable-next-line no-console
+            console.log("No \"urn_resolver\" callback defined to resolve \"".concat(urn, "\""));
+            throw new Error("Must set urn_resolver option to a callback to resolve ".concat(urn));
+          } // theoretically a URN can contain a JSON pointer
+
+
+          if (urn.indexOf('#') > 0) urn = urn.substr(0, urn.indexOf('#'));
+          var response;
+
+          try {
+            response = urnResolver(urn, function (responseText) {
+              try {
+                schema = JSON.parse(responseText);
+              } catch (e) {
+                // eslint-disable-next-line no-console
+                console.log(e);
+                throw new Error("Failed to parse external ref ".concat(urn));
+              }
+
+              if (!(typeof schema === 'boolean' || _typeof(schema) === 'object') || schema === null || Array.isArray(schema)) {
+                throw new Error("External ref does not contain a valid schema - ".concat(urn));
+              }
+
+              _this12.refs[uri] = schema;
+
+              _this12._getDefinitions(schema, "".concat(urn, "#/definitions/"));
+
+              _this12._loadExternalRefs(schema, function () {
+                waiting--;
+
+                if (done && !waiting) {
+                  callback();
+                }
+              }, uri, '/');
+            });
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            console.log(e);
+            throw new Error("Failed to parse external ref ".concat(urn));
+          }
+
+          if (typeof response !== 'boolean') {
+            throw new Error("External ref does not contain a valid schema - ".concat(urn));
+          } else if (response !== true) {
+            throw new Error("External ref did not resolve - ".concat(urn));
+          }
+
+          return;
+        }
+
+        if (!_this12.options.ajax) throw new Error("Must set ajax option to true to load external ref ".concat(uri));
+        _this12.refs[uri] = 'loading';
+        waiting++;
+
+        var url = _this12._joinUrl(uri, fileBase);
+
         var r = new XMLHttpRequest();
         r.overrideMimeType('application/json');
-        r.open('GET', fetchUrl, true);
+        r.open('GET', url, true);
         if (_this12.options.ajaxCredentials) r.withCredentials = _this12.options.ajaxCredentials;
 
         r.onreadystatechange = function () {
@@ -21788,42 +21952,50 @@ var SchemaLoader = /*#__PURE__*/function () {
           /* Request succeeded */
 
           if (r.status === 200) {
-            var response;
+            var _schema2;
 
             try {
-              response = JSON.parse(r.responseText);
+              _schema2 = JSON.parse(r.responseText);
             } catch (e) {
-              window.console.log(e);
-              throw new Error("Failed to parse external ref ".concat(fetchUrl));
+              // eslint-disable-next-line no-console
+              console.log(e);
+              throw new Error("Failed to parse external ref ".concat(url));
             }
 
-            if (!(typeof response === 'boolean' || _typeof(response) === 'object') || response === null || Array.isArray(response)) {
-              throw new Error("External ref does not contain a valid schema - ".concat(fetchUrl));
+            if (!(typeof _schema2 === 'boolean' || _typeof(_schema2) === 'object') || _schema2 === null || Array.isArray(_schema2)) {
+              throw new Error("External ref does not contain a valid schema - ".concat(url));
             }
 
-            _this12.refs[url] = response;
+            _this12.refs[uri] = _schema2;
 
-            var _fileBase = _this12._getFileBaseFromFileLocation(fetchUrl);
+            var _fileBase = _this12._getFileBaseFromFileLocation(url); // add leading slash
 
-            _this12._getDefinitions(response, "".concat(fetchUrl, "#/definitions/"));
 
-            _this12._loadExternalRefs(response, function () {
-              done++;
+            if (url !== uri) {
+              var pathItems = url.split('/');
+              url = (uri.substr(0, 1) === '/' ? '/' : '') + pathItems.pop();
+            }
 
-              if (done >= waiting && !callbackFired) {
-                callbackFired = true;
+            _this12._getDefinitions(_schema2, "".concat(url, "#/definitions/"));
+
+            _this12._loadExternalRefs(_schema2, function () {
+              waiting--;
+
+              if (done && !waiting) {
                 callback();
               }
-            }, fetchUrl, _fileBase);
+            }, url, _fileBase);
           } else {
             /* Request failed */
-            window.console.log(r);
-            throw new Error("Failed to fetch ref via ajax- ".concat(url));
+            // eslint-disable-next-line no-console
+            console.log(r);
+            throw new Error("Failed to fetch ref via ajax - ".concat(uri));
           }
         };
 
         r.send();
       });
+      done = true;
 
       if (!waiting) {
         callback();
@@ -22441,7 +22613,7 @@ var AbstractTheme = /*#__PURE__*/function () {
     }
   }, {
     key: "getHeader",
-    value: function getHeader(text) {
+    value: function getHeader(text, pathDepth) {
       var el = document.createElement('h3');
 
       if (typeof text === 'string') {
@@ -23396,7 +23568,7 @@ var bootstrap3Theme = /*#__PURE__*/function (_AbstractTheme) {
     }
   }, {
     key: "getFormControl",
-    value: function getFormControl(label, input, description) {
+    value: function getFormControl(label, input, description, infoText) {
       var group = document.createElement('div');
 
       if (label && (input.type === 'checkbox' || input.type === 'radio')) {
@@ -23409,6 +23581,7 @@ var bootstrap3Theme = /*#__PURE__*/function (_AbstractTheme) {
         if (label) {
           label.classList.add('control-label');
           group.appendChild(label);
+          if (infoText) label.appendChild(infoText);
         }
 
         group.appendChild(input);
@@ -23442,7 +23615,6 @@ var bootstrap3Theme = /*#__PURE__*/function (_AbstractTheme) {
       tooltip.style.padding = '.5rem 1rem';
       tooltip.style['border-radius'] = '.25rem';
       tooltip.style.width = '25rem';
-      tooltip.style.transform = 'translateX(-27rem) translateY(-.5rem)';
       tooltip.style.position = 'absolute';
       tooltip.innerText = text;
 
@@ -24098,6 +24270,7 @@ var bootstrap4Theme = /*#__PURE__*/function (_AbstractTheme) {
         if (window.jQuery && window.jQuery().tooltip) {
           window.jQuery(button).tooltip();
         } else {
+          // eslint-disable-next-line no-console
           console.warn('Could not find popper jQuery plugin of Bootstrap.');
         }
       } else if (this.options.tooltip === 'css') {
@@ -24264,7 +24437,7 @@ var bootstrap4Theme = /*#__PURE__*/function (_AbstractTheme) {
     }
   }, {
     key: "getHeader",
-    value: function getHeader(text) {
+    value: function getHeader(text, pathDepth) {
       /* var cardHeader = document.createElement('div') */
 
       /* cardHeader.classList.add('card-header') */
@@ -24344,7 +24517,7 @@ var bootstrap4Theme = /*#__PURE__*/function (_AbstractTheme) {
     key: "addInputError",
     value: function addInputError(input, text) {
       if (!input.controlgroup) return;
-      input.classList.add('is-invalid');
+      input.controlgroup.classList.add('is-invalid');
 
       if (!input.errmsg) {
         input.errmsg = document.createElement('p');
@@ -24361,7 +24534,7 @@ var bootstrap4Theme = /*#__PURE__*/function (_AbstractTheme) {
     value: function removeInputError(input) {
       if (!input.errmsg) return;
       input.errmsg.style.display = 'none';
-      input.classList.remove('is-invalid');
+      input.controlgroup.classList.remove('is-invalid');
     }
   }, {
     key: "getTabHolder",
@@ -24742,10 +24915,9 @@ var htmlTheme = /*#__PURE__*/function (_AbstractTheme) {
   }, {
     key: "addInputError",
     value: function addInputError(input, text) {
-      input.style.borderColor = 'red';
+      var group = this.closest(input, '.form-control') || input.controlgroup;
 
       if (!input.errmsg) {
-        var group = this.closest(input, '.form-control');
         input.errmsg = document.createElement('div');
         input.errmsg.setAttribute('class', 'errmsg');
         input.errmsg.style = input.errmsg.style || {};
@@ -25445,7 +25617,7 @@ var spectreTheme = /*#__PURE__*/function (_AbstractTheme) {
     }
   }, {
     key: "getHeader",
-    value: function getHeader(text) {
+    value: function getHeader(text, pathDepth) {
       var el = document.createElement('h4');
 
       if (typeof text === 'string') {
@@ -25508,7 +25680,6 @@ var spectreTheme = /*#__PURE__*/function (_AbstractTheme) {
   }, {
     key: "getMultiCheckboxHolder",
     value: function getMultiCheckboxHolder(controls, label, description, infoText) {
-      console.log('mul');
       return _get(_getPrototypeOf(spectreTheme.prototype), "getMultiCheckboxHolder", this).call(this, controls, label, description, infoText);
     }
     /* Radio elements */
@@ -25604,14 +25775,18 @@ var spectreTheme = /*#__PURE__*/function (_AbstractTheme) {
       var group = document.createElement('div');
       group.classList.add('form-group');
 
-      if (label) {
-        if (input.type === 'checkbox') {
-          label = this.getFormCheckboxControl(label, input, false);
+      if (label && (input.type === 'checkbox' || input.type === 'radio')) {
+        group.classList.add(input.type);
+        label.insertBefore(input, label.firstChild);
+        group.appendChild(label);
+      } else {
+        if (label) {
+          label.classList.add('form-label');
+          group.appendChild(label);
+          if (infoText) label.appendChild(infoText);
         }
 
-        label.classList.add('form-label');
-        group.appendChild(label);
-        if (infoText) group.insertBefore(infoText, group.firstChild);
+        group.appendChild(input);
       }
 
       if (this.options.input_size === 'small') input.classList.add('input-sm', 'select-sm');else if (this.options.input_size === 'large') input.classList.add('input-lg', 'select-lg');
@@ -26072,7 +26247,7 @@ var tailwindTheme = /*#__PURE__*/function (_AbstractTheme) {
   }, {
     key: "getTitle",
     value: function getTitle() {
-      return this.schema.title;
+      return this.translateProperty(this.schema.title);
     }
   }, {
     key: "getSelectInput",
@@ -26774,8 +26949,6 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
-
 function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest(); }
 
 function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); }
@@ -26796,6 +26969,8 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) return _arrayLikeToAr
 
 function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len = arr.length; for (var i = 0, arr2 = new Array(len); i < len; i++) { arr2[i] = arr[i]; } return arr2; }
 
+function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
 function _defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } }
@@ -26812,8 +26987,22 @@ var Validator = /*#__PURE__*/function () {
     this.schema = schema || this.jsoneditor.schema;
     this.options = options || {};
     this.translate = this.jsoneditor.translate || defaults.translate;
+    this.translateProperty = this.jsoneditor.translateProperty || defaults.translateProperty;
     this.defaults = defaults;
     this._validateSubSchema = {
+      "const": function _const(schema, value, path) {
+        var valid = JSON.stringify(schema["const"]) === JSON.stringify(value) && !(Array.isArray(value) || _typeof(value) === 'object');
+
+        if (!valid) {
+          return [{
+            path: path,
+            property: 'const',
+            message: this.translate('error_const')
+          }];
+        }
+
+        return [];
+      },
       "enum": function _enum(schema, value, path) {
         var stringified = JSON.stringify(value);
         var valid = schema["enum"].some(function (e) {
@@ -27084,7 +27273,6 @@ var Validator = /*#__PURE__*/function () {
 
             /* Validate against it */
             if (schema.items[i]) {
-              console.log('-->');
               errors.push.apply(errors, _toConsumableArray(this._validateSchema(schema.items[i], value[i], "".concat(path, ".").concat(i))));
               /* If all additional items are allowed */
             } else if (schema.additionalItems === true) {
@@ -27200,7 +27388,7 @@ var Validator = /*#__PURE__*/function () {
             errors.push({
               path: path,
               property: 'required',
-              message: _this8.translate('error_required', [e])
+              message: _this8.translate('error_required', [schema && schema.properties && schema.properties[e] && schema.properties[e].title ? schema.properties[e].title : e])
             });
           });
         }
@@ -27262,9 +27450,6 @@ var Validator = /*#__PURE__*/function () {
           /* Check property names that don't match */
 
           if (typeof schema.propertyNames === 'boolean') {
-            console.log(schema.propertyNames ? 'TRUE' : 'FALSE');
-            console.log('*' + k + '*');
-
             if (schema.propertyNames === true) {
               return "continue";
             }
@@ -27294,6 +27479,14 @@ var Validator = /*#__PURE__*/function () {
 
                 if (k.length > prop) {
                   msg = 'error_property_names_exceeds_maxlength';
+                  break;
+                }
+
+                return true;
+
+              case 'const':
+                if (prop !== k) {
+                  msg = 'error_property_names_const_mismatch';
                   break;
                 }
 
@@ -27543,7 +27736,7 @@ var Validator = /*#__PURE__*/function () {
   }, {
     key: "_validateV3Required",
     value: function _validateV3Required(schema, value, path) {
-      if (typeof schema.required !== 'undefined' && schema.required === true || typeof schema.required === 'undefined' && this.jsoneditor.options.required_by_default === true) {
+      if ((typeof schema.required !== 'undefined' && schema.required === true || typeof schema.required === 'undefined' && this.jsoneditor.options.required_by_default === true) && schema.type !== 'info') {
         return [{
           path: path,
           property: 'required',
