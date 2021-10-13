@@ -3,9 +3,16 @@
   "type": "object",
   "required": [
     "file_type",
-    "file_format"
+    "file_format",
+    "table_sheet_name"
   ],
   "properties": {
+    "table_sheet_name": {
+      "type": "string",
+      "options": {
+        "infoText": "Name of the sheet or table. Specify 'None' if the file format is set to 'CSV'"
+      }
+    },
     "file_type": {
       "type": "string",
       "enum": ["Table"]
@@ -15,7 +22,8 @@
       "enum": [
         "CSV",
         "Excel",
-        "Origin"
+        "Origin",
+        "Database table"
       ]
     },
     "num_header_lines": {
@@ -30,7 +38,6 @@
       "options": {
         "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
       },
-      "description": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text",
       "items": {
          "title": "Column",
          "type": "object",
@@ -51,6 +58,16 @@
                 },
                 "description": {
                   "type": "string"
+                },
+                "data_type": {
+                  "type": "string",
+                  "enum": [
+                    "Text",
+                    "Number",
+                    "Date",
+                    "Time",
+                    "Date time"
+                  ]
                 }
           }
       }
