@@ -7,10 +7,12 @@
   ],
   "properties": {
     "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": ["Document"]
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
         "PDF",

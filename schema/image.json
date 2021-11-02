@@ -7,39 +7,45 @@
   ],
   "properties": {
     "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": ["Image"]
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
-        "jpg", 
-        "png", 
-        "tif", 
-        "ai", 
-        "eps",
-        "svg",
-        "bmp",
-        "pdf"
+        ".jpg",
+        ".png",
+        ".tif",
+        ".ai",
+        ".eps",
+        ".svg",
+        ".bmp",
+        ".pdf"
       ]
     },
     "resolution": {
+      "title": "Resolution",
       "type": "string",
       "enum": [
-        "high", 
-        "medium", 
-        "low"
+        "High",
+        "Medium",
+        "Low"
       ]
     },
     "caption": {
+      "title": "Caption",
       "type": "string"
     },
     "copy_right": {
+      "title": "Copy right",
       "type": "string"
     },
     "purpose": {
+      "title": "Purpose",
       "type": "string",
-      "description": "e. g. research, documentation, web media, print media, social media, press release"
+      "description": "E. g. research, documentation, web media, print media, social media, press release"
     }
   }
 }

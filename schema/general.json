@@ -19,17 +19,20 @@
       }
     },
     "file_name": {
+      "title": "File name",
       "type": "string",
       "description": "Name of the file itself",
       "default": "<file name>"
     },
     "full_path": {
+      "title": "Full path",
       "type": "string",
       "format": "uri",
       "description": "Full path/uri of file location",
       "default": "<uri>"
     },
     "file_description": {
+      "title": "File description",
       "type": "string",
       "format": "textarea",
       "description": "Description of the file"
@@ -45,6 +48,7 @@
       }
     },
     "creation_date": {
+      "title": "Creation date",
       "type": "string",
       "format": "date",
       "options": {
@@ -52,6 +56,7 @@
       }
     },
     "last_modified_date": {
+      "title": "Date of last modification",
       "type": "string",
       "format": "date",
       "options": {
@@ -59,9 +64,9 @@
       }
     },
     "contributors": {
+      "title": "Contributors",
       "type": "array",
       "format": "table",
-      "title": "Contributors",
       "uniqueItems": true,
       "items": {
         "title": "Contributor",
@@ -69,10 +74,11 @@
       }
     },
     "data_policy": {
+      "title": "Data policy",
       "type": "string",
       "enum": [
         "Internal",
-        "Selected Externals",
+        "Selected externals",
         "Public"
       ],
       "description": "Access restrictions of the file",

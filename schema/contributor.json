@@ -7,6 +7,7 @@
    ],
    "properties": {
           "affiliation": {
+            "title": "Affiliation",
             "type": "string",
             "enum": [
               "Fraunhofer ISC",
@@ -20,6 +21,7 @@
             ]
           },
           "name": {
+            "title": "Name",
             "type": "string"
           }
     }

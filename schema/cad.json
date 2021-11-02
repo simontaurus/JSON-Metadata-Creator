@@ -7,16 +7,17 @@
   ],
   "properties": {
     "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": ["CAD"]
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
         "Inventor",
         "STEP",
         "STL",
-        "STEP",
         "DXF",
         "brd"
       ]

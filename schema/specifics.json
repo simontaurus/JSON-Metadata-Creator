@@ -35,11 +35,11 @@
           },
           {
             "$ref": "sourcecode.json",
-            "title": "Source Code"
+            "title": "Source code"
           },
           {
             "$ref": "sample.json",
-            "title": "Sample Reference"
+            "title": "Sample reference"
           },
           {
             "$ref": "eisdata.json",

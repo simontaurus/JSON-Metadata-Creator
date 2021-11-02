@@ -7,12 +7,14 @@
   ],
   "properties": {
     "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": [
         "EIS data"
       ]
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
         ".txt",
@@ -26,13 +28,14 @@
       ]
     },
     "num_header_lines": {
+      "title": "Number of header lines",
       "type": "integer",
       "description": "Number of header lines. Last line is supposed to contain column names. If the file contains no header line choose 0"
     },
     "columns": {
+      "title": "Columns",
       "type": "array",
       "format": "table",
-      "title": "Columns",
       "uniqueItems": false,
       "options": {
         "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
@@ -47,30 +50,36 @@
         ],
         "properties": {
           "header": {
+            "title": "Header",
             "type": "string",
             "options": {
               "infoText": "The name of the column as specified in the header"
             }
           },
           "name": {
+            "title": "Name",
             "type": "string",
             "options": {
               "infoText": "The name of the column to be used after import"
             }
           },
           "unit": {
+            "title": "Unit",
             "type": "string"
           },
           "description": {
+            "title": "Description",
             "type": "string"
           }
         }
       }
     },
     "procedure_details": {
+      "title": "Procedure details",
       "type": "object",
       "properties": {
         "eis_type": {
+          "title": "EIS type",
           "type": "string",
           "enum": [
             "PEIS",
@@ -80,6 +89,7 @@
           ]
         },
         "mode": {
+          "title": "Mode",
           "type": "string",
           "enum": [
             "Single sine",
@@ -88,28 +98,34 @@
           ]
         },
         "amplitude": {
+          "title": "Amplitude",
           "type": "number",
           "description": "Amplitude of excitation in mV or mA, depending on eis_type."
         },
         "frequency_range": {
+          "title": "Frequency range",
           "type": "object",
           "properties": {
             "lowest_frequency": {
+              "title": "Lowest frequency",
               "type": "number",
-              "description": "Lowest frequency in Hz"
+              "description": "in Hz"
             },
             "highest_frequency": {
+              "title": "Highest frequency",
               "type": "number",
-              "description": "Highest frequency in Hz"
+              "description": "in Hz"
             },
             "step_size": {
+              "title": "Step size",
               "type": "object",
               "properties": {
                 "num_points": {
-                  "type": "integer",
-                  "description": "number of points"
+                  "title": "Number of points",
+                  "type": "integer"
                 },
                 "boundary_option": {
+                  "title": "Boundary option",
                   "type": "string",
                   "enum": [
                     "per decade",
@@ -118,6 +134,7 @@
                   "description": "with"
                 },
                 "spacing_option": {
+                  "title": "Spacing option",
                   "type": "string",
                   "enum": [
                     "logarithmic",
@@ -131,16 +148,21 @@
           }
         },
         "averaging": {
+          "title": "Averaging",
           "type": "number",
-          "description": "Number of repetitions averaged for a single data point in the file."
+          "description": "Number of repetitions averaged for a single data point in the file.",
+          "default": 1
         },
         "drift_correction": {
+          "title": "Drift correction",
           "type": "boolean",
-          "description": "If drift correction is enabled, frequency will be swept downwards and upwards."
+          "description": "If the drift correction is enabled, the frequency will be swept downwards and upwards.",
+          "default": false
         }
       }
     },
     "setup_details": {
+      "title": "Setup details",
       "type": "object",
       "properties": {
         "control": {
@@ -157,13 +179,14 @@
       "type": "object",
       "properties": {
         "ambient_temperature": {
+          "title": "Ambient temperature",
           "type": "number",
           "description": "in degree Celsius"
         },
         "sample_state": {
+          "title": "Sample state",
           "type": "array",
           "format": "table",
-          "title": "Sample state",
           "uniqueItems": true,
           "items": {
             "title": "State",
@@ -174,6 +197,7 @@
             ],
             "properties": {
               "variable": {
+                "title": "Variable",
                 "type": "string",
                 "enum": [
                   "Time at rest / s",
@@ -184,9 +208,11 @@
                 ]
               },
               "value": {
+                "title": "Number",
                 "type": "number"
               },
               "description": {
+                "title": "description",
                 "type": "string"
               }
             }
