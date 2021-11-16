@@ -30,7 +30,9 @@
     "num_header_lines": {
       "title": "Number of header lines",
       "type": "integer",
-      "description": "Number of header lines. Last line is supposed to contain column names. If the file contains no header line choose 0"
+      "options": {
+        "infoText": "Number of header lines. Last line is supposed to contain column names. If the file contains no header line choose 0"
+      }
     },
     "columns": {
       "title": "Columns",
@@ -100,21 +102,33 @@
         "amplitude": {
           "title": "Amplitude",
           "type": "number",
-          "description": "Amplitude of excitation in mV or mA, depending on eis_type."
+          "options": {
+            "infoText": "The amplitude of the excitation in mV or mA, depending on EIS type"
+          }
+        },
+        "amplitude_unit": {
+          "title": "Unit of the amplitude",
+          "type": "string",
+          "enum": [
+            "mV",
+            "mA"
+          ],
+          "default": "mV",
+          "options": {
+            "infoText": "The unit of the amplitude of the excitation"
+          }
         },
         "frequency_range": {
           "title": "Frequency range",
           "type": "object",
           "properties": {
             "lowest_frequency": {
-              "title": "Lowest frequency",
-              "type": "number",
-              "description": "in Hz"
+              "title": "Lowest frequency in Hz",
+              "type": "number"
             },
             "highest_frequency": {
-              "title": "Highest frequency",
-              "type": "number",
-              "description": "in Hz"
+              "title": "Highest frequency in Hz",
+              "type": "number"
             },
             "step_size": {
               "title": "Step size",
@@ -130,8 +144,7 @@
                   "enum": [
                     "per decade",
                     "across all frequencies"
-                  ],
-                  "description": "with"
+                  ]
                 },
                 "spacing_option": {
                   "title": "Spacing option",
@@ -140,8 +153,7 @@
                     "logarithmic",
                     "linear",
                     "semi-logarithmic"
-                  ],
-                  "description": "spacing"
+                  ]
                 }
               }
             }
@@ -150,14 +162,18 @@
         "averaging": {
           "title": "Averaging",
           "type": "number",
-          "description": "Number of repetitions averaged for a single data point in the file.",
-          "default": 1
+          "default": 1,
+          "options": {
+            "infoText": "The number of repetitions averaged for a single data point in the file"
+          }
         },
         "drift_correction": {
           "title": "Drift correction",
           "type": "boolean",
-          "description": "If the drift correction is enabled, the frequency will be swept downwards and upwards.",
-          "default": false
+          "default": false,
+          "options": {
+            "infoText": "If the drift correction is enabled, the frequency will be swept downwards and upwards"
+          }
         }
       }
     },
@@ -179,9 +195,8 @@
       "type": "object",
       "properties": {
         "ambient_temperature": {
-          "title": "Ambient temperature",
-          "type": "number",
-          "description": "in degree Celsius"
+          "title": "Ambient temperature in °C",
+          "type": "number"
         },
         "sample_state": {
           "title": "Sample state",
@@ -212,7 +227,7 @@
                 "type": "number"
               },
               "description": {
-                "title": "description",
+                "title": "Description",
                 "type": "string"
               }
             }

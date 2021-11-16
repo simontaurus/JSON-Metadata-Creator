@@ -21,21 +21,27 @@
     "file_name": {
       "title": "File name",
       "type": "string",
-      "description": "Name of the file itself",
-      "default": "<file name>"
+      "default": "<file name>",
+      "options": {
+        "infoText": "Name of the file to be described by the JSON"
+      }
     },
     "full_path": {
       "title": "Full path",
       "type": "string",
       "format": "uri",
-      "description": "Full path/uri of file location",
-      "default": "<uri>"
+      "default": "<uri>",
+      "options": {
+        "infoText": "Full path or uri of file location"
+      }
     },
     "file_description": {
       "title": "File description",
       "type": "string",
       "format": "textarea",
-      "description": "Description of the file"
+      "options": {
+        "infoText": "A description of the file"
+      }
     },
     "tags": {
       "type": "array",
@@ -81,8 +87,10 @@
         "Selected externals",
         "Public"
       ],
-      "description": "Access restrictions of the file",
-      "default": "Institution A"
+      "default": "Internal",
+      "options": {
+        "infoText": "Access restrictions of the file"
+      }
     },
     "specifics": {
       "title": "Specifics",

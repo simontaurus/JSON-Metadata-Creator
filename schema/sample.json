@@ -18,7 +18,9 @@
     "sample_description": {
       "title": "Sample description",
       "type": "string",
-      "description": "Description of the sample"
+      "options": {
+        "infoText": "A description of the sample"
+      }
     }
   }
 }

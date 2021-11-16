@@ -45,7 +45,9 @@
     "purpose": {
       "title": "Purpose",
       "type": "string",
-      "description": "E. g. research, documentation, web media, print media, social media, press release"
+      "options": {
+        "infoText": "E. g. research, documentation, web media, print media, social media, press release"
+      }
     }
   }
 }

@@ -11,7 +11,7 @@
       "title": "Table sheet name",
       "type": "string",
       "options": {
-        "infoText": "Name of the sheet or table. Specify 'None' if the file format is set to 'CSV'"
+        "infoText": "The name of the sheet or table. Specify 'None' if the file format is set to 'CSV'"
       }
     },
     "file_type": {
@@ -32,7 +32,9 @@
     "num_header_lines": {
       "title": "Number of header lines",
       "type": "integer",
-      "description": "The last line is supposed to contain column names. If the file contains no header line choose 0"
+      "options": {
+        "infoText": "The last line is supposed to contain column names. If the file contains no header line choose 0"
+      }
     },
     "columns": {
       "title": "Columns",
@@ -40,7 +42,7 @@
       "format": "table",
       "uniqueItems": false,
       "options": {
-        "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
+        "infoText": "'Header': column label in the file, 'Name': preferred label for import, 'Unit': physical unit, 'Description': comment / free text"
       },
       "items": {
          "title": "Column",
