@@ -10,7 +10,7 @@
     <link rel='stylesheet' id='iconlib-link'>
 </head>
 <body>
-<div class='container grid-xl'>
+<div class='container-fluid'>
     <div class="row columns md:flex">
         <div class='col-8 col-md-8 w-8/12'>
             <h1>Spartacus JSON Meta Data Editor</h1>
@@ -424,9 +424,9 @@
 
       button.addEventListener('click', function(e) {
         e.preventDefault();
-        var example = jsoneditor.getValue(),
-        filename = 'metadata.json',
-        blob = new Blob([JSON.stringify(example, null, 2)], {
+        var metadata_json = jsoneditor.getValue(),
+        filename = metadata_json.file_name + '.metadata.json',
+        blob = new Blob([JSON.stringify(metadata_json, null, 2)], {
           type: "application/json;charset=utf-8"
         });
 
