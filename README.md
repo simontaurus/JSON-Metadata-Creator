@@ -16,7 +16,7 @@ With this tool it should be possible to create at least basic structured and eas
 
 ## Implementation
 
-JSON Metadata Creator is an interactive web form, accessible at https://simontaurus.github.io/JSON-Metadata-Creator/
+JSON Metadata Creator is an interactive web form, accessible at https://horizon-2020-spartacus.github.io/JSON-Metadata-Creator/
 The structure of the form is based on modular schemas that define the form and structure of the data.
 The basic schema can be extended with any number of complementary schemas.
 The input can then be saved directly as a JSON file & uploaded to a cloud folder.
