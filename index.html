@@ -425,7 +425,7 @@
       button.addEventListener('click', function(e) {
         e.preventDefault();
         var metadata_json = jsoneditor.getValue(),
-        var filename = metadata_json.file_name + '.metadata.json',
+        filename = metadata_json.file_name + '.metadata.json',
         blob = new Blob([JSON.stringify(metadata_json, null, 2)], {
           type: "application/json;charset=utf-8"
         });
