@@ -18,6 +18,14 @@
         "hidden": true
       }
     },
+    "form_url": {
+      "type": "string",
+      "format": "uri",
+      "default": "https://horizon-2020-spartacus.github.io/JSON-Metadata-Creator/",
+      "options": {
+        "hidden": true
+      }
+    },
     "file_name": {
       "title": "File name",
       "type": "string",

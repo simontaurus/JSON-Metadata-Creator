@@ -423,9 +423,10 @@
 
       button.addEventListener('click', function(e) {
         e.preventDefault();
-        var metadata_json = jsoneditor.getValue(),
-        filename = metadata_json.file_name + '.metadata.json',
-        blob = new Blob([JSON.stringify(metadata_json, null, 2)], {
+        var metadata_json = jsoneditor.getValue();
+        metadata_json.form_url = updateDirectLink(false)
+        var filename = metadata_json.file_name + '.metadata.json';
+        var blob = new Blob([JSON.stringify(metadata_json, null, 2)], {
           type: "application/json;charset=utf-8"
         });
 
@@ -449,11 +450,14 @@
 
   /* ------------------------------------------------------- updateDirectLink */
 
-  var updateDirectLink = function () {
+  var updateDirectLink = function (update_window_location=true) {
     var url = window.location.href.replace(/\?.*/, '')
     url += '?data='
     url +=  encodeURIComponent(LZString.compressToBase64(JSON.stringify(data)))
-    directLink.href = url
+    if (update_window_location) {
+        directLink.href = url
+    }
+    return url
   }
 
   /* -------------------------------------------------------- event listeners */
