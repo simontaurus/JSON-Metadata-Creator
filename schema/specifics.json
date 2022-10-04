@@ -43,7 +43,11 @@
           },
           {
             "$ref": "eisdata.json",
-            "title": "EIS data"
+            "title": "Electrochemical impedance spectroscopy data"
+          },
+         {
+            "$ref": "cyclingdata.json",
+            "title": "Electrochemical cycling data"
           },
           {
             "$ref": "database.json",
