@@ -38,7 +38,7 @@
       "title": "Columns",
       "type": "array",
       "format": "table",
-      "uniqueItems": false,
+      "uniqueItems": true,
       "options": {
         "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
       },
@@ -192,6 +192,7 @@
       }
     },
     "conditions": {
+      "title": "Conditions",
       "type": "object",
       "properties": {
         "ambient_temperature": {
@@ -223,7 +224,7 @@
                 ]
               },
               "value": {
-                "title": "Number",
+                "title": "Value",
                 "type": "number"
               },
               "description": {

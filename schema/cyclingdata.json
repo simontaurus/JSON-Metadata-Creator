@@ -56,7 +56,6 @@
       "title": "Columns",
       "type": "array",
       "format": "table",
-      "uniqueItems": false,
       "options": {
         "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
       },
@@ -102,7 +101,6 @@
           "title": "Experiment type",
           "type": "array",
           "format": "table",
-          "uniqueItems": false,
           "items": {
             "title": "Sections",
             "type": "object",
@@ -149,7 +147,84 @@
         }
       }
     },
+    "sample_details": {
+      "title": "Sample details",
+      "type": "object",
+      "options": {
+              "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
+            },
+      "properties": {
+        "nominal_capacity": {
+          "title": "Nominal or theoretical capacity / Ah",
+          "type": "number"
+        },
+        "nominal_voltage": {
+          "title": "Nominal voltage / V",
+          "type": "number"
+        },
+        "nominal_weight": {
+          "title": "Nominal weight / g",
+          "type": "number"
+        },
+        "active_material_weight": {
+          "title": "Active material weight / g"
+        }
+      }
+    },
+    "operational_parameter": {
+      "title": "Operational parameter",
+      "type": "object",
+      "options": {
+              "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
+            },
+      "properties": {
+        "upper_voltage_limit": {
+          "title": "Specified upper operational voltage limit / V",
+          "type": "number"
+        },
+        "lower_voltage_limit": {
+          "title": "Specified lower operational voltage limit / V",
+          "type": "number"
+        },
+        "continuous_current_limits": {
+          "title": "Continuous current limits / A",
+          "type": "object",
+          "properties": {
+            "charging": {
+              "title": "Charging",
+              "type": "number"
+            },
+            "discharging": {
+              "title": "Discharging",
+              "type": "number"
+            }
+          }
+        },
+        "peak_current_limits": {
+          "title": "Pulse current limits / A",
+          "type": "object",
+          "properties": {
+            "charging": {
+              "title": "Charging",
+              "type": "number"
+            },
+            "charging_pulse_duration": {
+              "title": "Charging pulse duration / s",
+              "type": "number"
+            },
+            "discharging": {
+              "title": "Discharging",
+              "type": "number"
+            },
+            "discharging_pulse_duration": {
+              "title": "Discharging pulse duration / s",
+              "type": "number"
+          }
+        }
+      }
+    },
     "conditions": {
+      "title": "Conditions",
       "type": "object",
       "properties": {
         "ambient_temperature": {
@@ -157,7 +232,7 @@
           "type": "number"
         },
         "sample_state": {
-          "title": "Sample state",
+          "title": "Sample state before electrochemical test",
           "type": "array",
           "format": "table",
           "uniqueItems": true,
@@ -179,7 +254,7 @@
                 ]
               },
               "value": {
-                "title": "Number",
+                "title": "Value",
                 "type": "number"
               },
               "description": {
