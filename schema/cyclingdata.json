@@ -151,8 +151,8 @@
       "title": "Sample details",
       "type": "object",
       "options": {
-              "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
-            },
+        "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
+        },
       "properties": {
         "nominal_capacity": {
           "title": "Nominal or theoretical capacity / Ah",
@@ -168,15 +168,21 @@
         },
         "active_material_weight": {
           "title": "Active material weight / g"
+        },
+        "reference_electrode": {
+          "title": "Reference electrode",
+          "type": "boolean",
+          "format": "checkbox"
         }
       }
-    },
+    }
+  },
     "operational_parameter": {
       "title": "Operational parameter",
       "type": "object",
       "options": {
-              "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
-            },
+        "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
+        },
       "properties": {
         "upper_voltage_limit": {
           "title": "Specified upper operational voltage limit / V",
