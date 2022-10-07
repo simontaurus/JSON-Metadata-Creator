@@ -93,70 +93,59 @@
         }
       }
     },
-    "procedure_details": {
-      "title": "Procedure details",
-      "type": "object",
-      "properties": {
-        "experiment_type": {
-          "title": "Experiment type",
-          "type": "array",
-          "format": "table",
-          "items": {
-            "title": "Sections",
-            "type": "object",
-            "required": [
-              "section_type",
-              "cycles"
-            ],
-            "properties": {
-              "section_type": {
-                "title": "Type of the section",
-                "type": "string",
-                "enum": [
-                  "Wetting",
-                  "Formation",
-                  "Pulse test",
-                  "Rate capability test",
-                  "Quick charge test",
-                  "Cycling test",
-                  "Ageing",
-                  "Reference performance test"
-                ]
-              },
-              "cycles": {
-                "title": "Number of cycles",
-                "type": "string"
-              },
-              "description": {
-                "title": "Description",
-                "type": "string"
-              }
-            }
+    "experiment_type": {
+      "title": "Experiment type",
+      "type": "array",
+      "format": "table",
+      "items": {
+        "title": "Sections",
+        "type": "object",
+        "required": [
+          "section_type",
+          "cycles"
+        ],
+        "properties": {
+          "section_type": {
+            "title": "Type of the section",
+            "type": "string",
+            "enum": [
+              "Wetting",
+              "Formation",
+              "Pulse test",
+              "Rate capability test",
+              "Quick charge test",
+              "Cycling test",
+              "Ageing",
+              "Reference performance test"
+            ]
+          },
+          "cycles": {
+            "title": "Number of cycles",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
           }
         }
       }
     },
-    "setup_details": {
-      "title": "Setup details",
+    "setup_sample_details": {
+      "title": "Setup and sample details",
       "type": "object",
+      "options": {
+        "infoText": "Sample details as specified in the data sheet by the manufacturer or as defined in the best practice"
+      },
       "properties": {
         "control": {
+          "title": "Control",
           "type": "string",
           "enum": [
             "WE vs. CE",
             "WE vs. RE",
             "CE vs. RE"
           ]
-        }
-      }
-    },
-    "sample_details": {
-      "title": "Sample details",
-      "type": "object",
-      "options": {
-        "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
-      },
-      "properties": {
+        },
         "nominal_capacity": {
           "title": "Nominal or theoretical capacity / Ah",
           "type": "number"
@@ -278,71 +267,6 @@
                 "type": "string"
               }
             }
-          }
-        }
-      }
-    },
-    "procedure_building_blocks": {
-      "title": "Procedure building blocks",
-      "type": "object",
-      "properties": {
-        "custom_variables": {
-          "title": "Custom variables",
-          "type": "array",
-          "format": "table",
-          "uniqueItems": true,
-          "required":  [
-            "name",
-            "value"
-          ],
-          "items": {
-            "title": "Custom variables",
-            "type": "object",
-            "properties": {
-              "name": {
-                "title": "Name",
-                "type": "string"
-              },
-              "value": {
-                "title": "Value",
-                "type": "number"
-              },
-              "unit": {
-                "title": "Unit",
-                "type": "string"
-              }
-            }
-          }
-        },
-        "procedure_steps": {
-          "title": "Procedure steps",
-          "type": "string"
-        }
-      }
-    },
-    "procedure_recipe": {
-      "title": "Procedure recipe",
-      "type": "array",
-      "format": "table",
-      "items": {
-        "title": "Variable",
-        "type": "object",
-        "required": [
-          "referenced_variable"
-        ],
-        "properties": {
-          "referenced_variable": {
-            "title": "Reference variable",
-            "type": "string",
-            "watch": {
-              "vars": "custom_variables"
-            },
-            "enumSource": [
-              {
-                "source": "vars",
-                "value": "{{item.name}}"
-              }
-            ]
           }
         }
       }
