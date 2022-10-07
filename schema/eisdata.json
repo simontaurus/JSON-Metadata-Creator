@@ -182,6 +182,7 @@
       "type": "object",
       "properties": {
         "control": {
+          "title": "Control",
           "type": "string",
           "enum": [
             "WE vs. CE",
