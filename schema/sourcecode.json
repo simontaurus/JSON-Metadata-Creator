@@ -1,5 +1,5 @@
 {
-  "title": "Source Code",
+  "title": "Source code",
   "type": "object",
   "required": [
     "file_type",
@@ -8,10 +8,12 @@
   ],
   "properties": {
      "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": ["Source Code"]
     },
     "file_language": {
+      "title": "File language",
       "type": "string",
       "enum": [
         "Python",
@@ -22,9 +24,11 @@
       ]
     },
     "file_language_version": {
+      "title": "File language version",
       "type": "string"
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
         "Text",
@@ -32,15 +36,19 @@
       ]
     },
     "compiler": {
+      "title": "Compiler",
       "type": "string"
     },
     "compiler_version": {
+      "title": "Compiler version",
       "type": "string"
     },
     "IDE": {
+      "title": "IDE",
       "type": "string"
     },
     "IDE_version": {
+      "title": "IDE version",
       "type": "string"
     }
   }

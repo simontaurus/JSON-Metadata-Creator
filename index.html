@@ -18,9 +18,9 @@
 <div class='container-fluid'>
     <div class="row columns md:flex">
         <div class='col-8 col-md-8 w-8/12'>
-            <h1>Editor</h1>
-            <p>Below is the editor generated from the JSON Schema.</p>
-            <div id="json-editor-form" class="json-editor-compact"></div>
+            <h1>Spartacus JSON Meta Data Editor</h1>
+            <p>Below is the editor generated from the JSON Schema <a href="https://github.com/Horizon-2020-SPARTACUS/JSON-Metadata-Creator/tree/spartacus-specific">(Link to Source Code)</a></p>
+            <div id="json-editor-form"></div>
         </div>
         <div class='col-4 col-md-4 w-4/12'>
             <div>
@@ -118,7 +118,7 @@
              </div>
         </div>
     </div>
-    <div class="row columns md:flex">
+    <div class="row columns md:flex" style="display: none">
         <div class='col-12 col-md-12 w-12/12'>
             <h2>Schema</h2>
             <label for="schema-textarea">You can change the schema and see how the generated form looks. After you make
@@ -146,7 +146,9 @@
     schema: defaultSchema,
     show_errors: 'interaction',
     theme: 'bootstrap4',
-    ajax: true
+    ajax: true,
+    disable_edit_json: true,
+    disable_properties: true
   }
 
   var jsoneditor = null
@@ -428,9 +430,10 @@
 
       button.addEventListener('click', function(e) {
         e.preventDefault();
-        var metadata_json = jsoneditor.getValue(),
-        filename = metadata_json.file_name + '.metadata.json',
-        blob = new Blob([JSON.stringify(metadata_json, null, 2)], {
+        var metadata_json = jsoneditor.getValue();
+        metadata_json.form_url = updateDirectLink(false)
+        var filename = metadata_json.file_name + '.metadata.json';
+        var blob = new Blob([JSON.stringify(metadata_json, null, 2)], {
           type: "application/json;charset=utf-8"
         });
 
@@ -454,11 +457,14 @@
 
   /* ------------------------------------------------------- updateDirectLink */
 
-  var updateDirectLink = function () {
+  var updateDirectLink = function (update_window_location=true) {
     var url = window.location.href.replace(/\?.*/, '')
     url += '?data='
     url +=  encodeURIComponent(LZString.compressToBase64(JSON.stringify(data)))
-    directLink.href = url
+    if (update_window_location) {
+        directLink.href = url
+    }
+    return url
   }
 
   /* -------------------------------------------------------- event listeners */

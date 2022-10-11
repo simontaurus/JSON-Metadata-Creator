@@ -1,0 +1,276 @@
+{
+  "title": "Electrochemical cycling data",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "title": "File type",
+      "type": "string",
+      "enum": [
+        "Electrochemical cycling data"
+      ]
+    },
+    "device_manufacturer": {
+      "title": "Device manufacturer",
+      "type": "string",
+      "enum": [
+        "Agilent",
+        "Arbin",
+        "BaSyTec",
+        "BioLogic",
+        "Digatron",
+        "EA Elektro-Automatik",
+        "FuelCon (Horiba)",
+        "Gamry",
+        "Hioki",
+        "Scienlab (Keysight)",
+        "Maccor",
+        "Metrohm",
+        "Rigol",
+        "Solartron Analytical (AMETEK)"
+      ]
+    },
+    "file_format": {
+      "title": "File format",
+      "type": "string",
+      "enum": [
+        ".txt",
+        ".dat",
+        ".csv",
+        ".hdf",
+        ".json",
+        "other (vendor specific)"
+      ]
+    },
+    "num_header_lines": {
+      "title": "Number of header lines",
+      "type": "integer",
+      "options": {
+        "infoText": "Number of header lines. Last line is supposed to contain column names. If the file contains no header line choose 0"
+      }
+    },
+    "columns": {
+      "title": "Columns",
+      "type": "array",
+      "format": "table",
+      "options": {
+        "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
+      },
+      "items": {
+        "title": "Column",
+        "type": "object",
+        "required": [
+          "header",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "header": {
+            "title": "Header",
+            "type": "string",
+            "options": {
+              "infoText": "The name of the column as specified in the header"
+            }
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "options": {
+              "infoText": "The name of the column to be used after import"
+            }
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "experiment_type": {
+      "title": "Experiment type",
+      "type": "array",
+      "format": "table",
+      "items": {
+        "title": "Sections",
+        "type": "object",
+        "required": [
+          "section_type",
+          "cycles"
+        ],
+        "properties": {
+          "section_type": {
+            "title": "Type of the section",
+            "type": "string",
+            "enum": [
+              "Wetting",
+              "Formation",
+              "Pulse test",
+              "Rate capability test",
+              "Quick charge test",
+              "Cycling test",
+              "Ageing",
+              "Reference performance test"
+            ]
+          },
+          "cycles": {
+            "title": "Number of cycles",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "setup_sample_details": {
+      "title": "Setup and sample details",
+      "type": "object",
+      "options": {
+        "infoText": "Sample details as specified in the data sheet by the manufacturer or as defined in the best practice"
+      },
+      "properties": {
+        "control": {
+          "title": "Control",
+          "type": "string",
+          "enum": [
+            "WE vs. CE",
+            "WE vs. RE",
+            "CE vs. RE"
+          ]
+        },
+        "nominal_capacity": {
+          "title": "Nominal or theoretical capacity / Ah",
+          "type": "number"
+        },
+        "nominal_voltage": {
+          "title": "Nominal voltage / V",
+          "type": "number"
+        },
+        "nominal_weight": {
+          "title": "Nominal weight / g",
+          "type": "number"
+        },
+        "active_material_weight": {
+          "title": "Active material weight / g",
+          "type": "number"
+        },
+        "reference_electrode": {
+          "title": "Reference electrode",
+          "type": "boolean",
+          "format": "checkbox"
+        }
+      }
+    },
+    "operational_parameter": {
+      "title": "Operational parameter",
+      "type": "object",
+      "options": {
+        "infoText": "As specified in the data sheet by the manufacturer or as defined in the best practice"
+      },
+      "properties": {
+        "operational_voltage_limits": {
+          "title": "Operational voltage limits / V",
+          "type": "object",
+          "properties": {
+            "upper_voltage_limit": {
+              "title": "Upper",
+              "type": "number"
+            },
+            "lower_voltage_limit": {
+              "title": "Lower",
+              "type": "number"
+            }
+          }
+        },
+        "continuous_current_limits": {
+          "title": "Continuous current limits / A",
+          "type": "object",
+          "properties": {
+            "charging": {
+              "title": "Charging",
+              "type": "number"
+            },
+            "discharging": {
+              "title": "Discharging",
+              "type": "number"
+            }
+          }
+        },
+        "peak_current_limits": {
+          "title": "Pulse current limits / A",
+          "type": "object",
+          "properties": {
+            "charging": {
+              "title": "Charging",
+              "type": "number"
+            },
+            "charging_pulse_duration": {
+              "title": "Charging pulse duration / s",
+              "type": "number"
+            },
+            "discharging": {
+              "title": "Discharging",
+              "type": "number"
+            },
+            "discharging_pulse_duration": {
+              "title": "Discharging pulse duration / s",
+              "type": "number"
+            }
+          }
+        }
+      }
+    },
+    "conditions": {
+      "title": "Conditions",
+      "type": "object",
+      "properties": {
+        "ambient_temperature": {
+          "title": "Ambient temperature in °C",
+          "type": "number"
+        },
+        "sample_state": {
+          "title": "Sample state before electrochemical test",
+          "type": "array",
+          "format": "table",
+          "uniqueItems": true,
+          "items": {
+            "title": "State",
+            "type": "object",
+            "required": [
+              "variable",
+              "value"
+            ],
+            "properties": {
+              "variable": {
+                "title": "Variable",
+                "type": "string",
+                "enum": [
+                  "Time at rest / s",
+                  "SoH / %",
+                  "Elapsed time since electrolyte filling / s"
+                ]
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              },
+              "description": {
+                "title": "Description",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

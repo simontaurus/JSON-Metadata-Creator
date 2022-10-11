@@ -1,0 +1,33 @@
+{
+  "title": "Database",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "title": "File type",
+      "type": "string",
+      "enum": ["Database"]
+    },
+    "file_format": {
+      "title": "File format",
+      "type": "string",
+      "enum": [
+        ".accdb (Microsoft Access)",
+        ".sdb (Apache OpenOffice Base database)",
+        ".odb (Apache OpenOffice OpenDocument database)"
+      ]
+    },
+    "elements": {
+      "title": "Element",
+      "type": "array",
+      "format": "tabs",
+      "items": {
+        "$ref": "table.json",
+        "title": "Table"
+      }
+    }
+  }
+}

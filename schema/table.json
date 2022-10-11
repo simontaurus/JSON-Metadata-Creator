@@ -3,30 +3,47 @@
   "type": "object",
   "required": [
     "file_type",
-    "file_format"
+    "file_format",
+    "table_sheet_name"
   ],
   "properties": {
+    "table_sheet_name": {
+      "title": "Table sheet name",
+      "type": "string",
+      "options": {
+        "infoText": "The name of the sheet or table. Specify 'None' if the file format is set to 'CSV'"
+      }
+    },
     "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": ["Table"]
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
         "CSV",
         "Excel",
-        "Origin"
+        "Origin",
+        "Database table"
       ]
     },
+    "num_header_lines": {
+      "title": "Number of header lines",
+      "type": "integer",
+      "options": {
+        "infoText": "The last line is supposed to contain column names. If the file contains no header line choose 0"
+      }
+    },
     "columns": {
+      "title": "Columns",
       "type": "array",
       "format": "table",
-      "title": "Columns",
       "uniqueItems": false,
       "options": {
-        "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
+        "infoText": "'Header': column label in the file, 'Name': preferred label for import, 'Unit': physical unit, 'Description': comment / free text"
       },
-      "description": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text",
       "items": {
          "title": "Column",
          "type": "object",
@@ -37,16 +54,31 @@
          ],
          "properties": {
                 "header": {
+                  "title": "Header",
                   "type": "string"
                 },
                 "name": {
+                  "title": "Name",
                   "type": "string"
                 },
                 "unit": {
+                  "title": "Unit",
                   "type": "string"
                 },
                 "description": {
+                  "title": "Description",
                   "type": "string"
+                },
+                "data_type": {
+                  "title": "Data type",
+                  "type": "string",
+                  "enum": [
+                    "Text",
+                    "Number",
+                    "Date",
+                    "Time",
+                    "Date time"
+                  ]
                 }
           }
       }
