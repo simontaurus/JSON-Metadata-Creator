@@ -1,6 +1,7 @@
 {
   "title": "Electrochemical cycling data",
   "type": "object",
+  "id": "cyclingdata",
   "required": [
     "file_type",
     "file_format"
@@ -267,6 +268,71 @@
                 "type": "string"
               }
             }
+          }
+        }
+      }
+    },
+    "procedure_building_blocks": {
+      "title": "Procedure building blocks",
+      "type": "object",
+      "properties": {
+        "custom_variables": {
+          "title": "Variables",
+          "type": "array",
+          "format": "table",
+          "uniqueItems": true,
+          "required":  [
+            "name",
+            "value"
+          ],
+          "items": {
+            "title": "Custom variables",
+            "type": "object",
+            "properties": {
+              "name": {
+                "title": "Name",
+                "type": "string"
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              },
+              "unit": {
+                "title": "Unit",
+                "type": "string"
+              }
+            }
+          }
+        },
+        "procedure_steps": {
+          "title": "Procedure steps",
+          "type": "string"
+        }
+      }
+    },
+    "procedure_recipe": {
+      "title": "Procedure recipe",
+      "type": "array",
+      "format": "table",
+      "items": {
+        "title": "Variable",
+        "type": "object",
+        "required": [
+          "referenced_variable"
+        ],
+        "properties": {
+          "referenced_variable": {
+            "title": "Reference variable",
+            "type": "string",
+            "watch": {
+              "vars": "cyclingdata.procedure_building_blocks.custom_variables"
+            },
+            "enumSource": [
+              {
+                "source": "vars",
+                "value": "{{item.name}}"
+              }
+            ]
           }
         }
       }

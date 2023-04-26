@@ -1,0 +1,52 @@
+{
+  "oneOf": [
+    {
+      "$ref": "none.json",
+      "title": "None"
+    },
+    {
+      "$ref": "document.json",
+      "title": "Document"
+    },
+    {
+      "$ref": "table.json",
+      "title": "Table"
+    },
+    {
+      "$ref": "image.json",
+      "title": "Image"
+    },
+    {
+      "$ref": "video.json",
+      "title": "Video"
+    },
+    {
+      "$ref": "cad.json",
+      "title": "CAD"
+    },
+    {
+      "$ref": "sourcecode.json",
+      "title": "Source code"
+    },
+    {
+      "$ref": "sample.json",
+      "title": "Sample reference"
+    },
+    {
+      "$ref": "eisdata.json",
+      "title": "Electrochemical impedance spectroscopy data"
+    },
+    {
+      "$ref": "cyclingdata.json",
+      "title": "Electrochemical cycling data"
+    },
+    {
+      "$ref": "database.json",
+      "title": "Database"
+    },
+    {
+      "$ref": "container.json",
+      "title": "Container"
+    }
+  ]
+}

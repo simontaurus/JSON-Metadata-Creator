@@ -23,7 +23,8 @@
       ]
     },
     "file_format_version": {
-      "type": "string"
+      "type": "string",
+      "title": "File format version"
     }
   }
 }

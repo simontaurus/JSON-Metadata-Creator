@@ -102,7 +102,16 @@
     },
     "specifics": {
       "title": "Specifics",
-      "$ref": "specifics.json"
+      "type": "array",
+      "format": "tabs",
+      "items": {
+      "title": "Specific",
+      "headerTemplate": "{{i}} - {{self.file_type}}",
+      "options": {
+            "keep_oneof_values": false
+      },
+      "$ref": "specificsOneOf.json"
+     }
     }
   }
 }

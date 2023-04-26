@@ -1,0 +1,89 @@
+{
+  "title": "Container",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "container_name": {
+      "type": "string",
+      "title": "Optional container name",
+      "default": "<file name, replace in case of subordinate container>",
+      "options": {
+        "infoText": "Specify if its a container inside a container!"
+      }
+    },
+    "file_type": {
+      "title": "File type",
+      "type": "string",
+      "enum": [
+        "Container"
+      ]
+    },
+    "file_format": {
+      "title": "File format",
+      "type": "string",
+      "enum": [
+        ".zip",
+        ".rar",
+        ".7z",
+        ".gz",
+        ".gzip",
+        ".tar.gz",
+        ".iso",
+        "folder",
+        "other"
+      ]
+    },
+    "file_format_version": {
+      "type": "string",
+      "title": "File format version"
+    },
+    "content": {
+      "title": "Content",
+      "type": "array",
+      "format": "tabs",
+      "items": {
+        "title": "Item",
+        "headerTemplate": "{{i}} - {{self.item_type.file_type}}",
+        "options": {
+            "keep_oneof_values": false
+        },
+        "type": "object",
+        "required": [
+          "name_or_pattern",
+          "number_of_items_per_type",
+          "item_type"
+        ],
+        "properties": {
+          "name_or_pattern": {
+            "type": "string",
+            "title": "Item name or pattern",
+            "options": {
+              "infoText": "If the number of items is greater than 1, a pattern is required."
+            }
+          },
+          "pattern_description": {
+            "type": "string",
+            "title": "Pattern description",
+            "options": {
+              "infoText": "Describe the pattern or specify the placeholders used in the pattern."
+            }
+          },
+          "number_of_items_per_type": {
+            "type": "integer",
+            "title": "Number of item per type",
+            "minimum": 1,
+            "default": 1
+          },
+          "item_type": {
+            "$ref": "specificsOneOf.json",
+            "title": "Item type"
+          }
+        }
+      }
+    }
+  }
+}
+
