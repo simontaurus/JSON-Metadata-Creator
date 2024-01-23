@@ -35,7 +35,23 @@
           },
           {
             "$ref": "sourcecode.json",
-            "title": "Source Code"
+            "title": "Source code"
+          },
+          {
+            "$ref": "sample.json",
+            "title": "Sample reference"
+          },
+          {
+            "$ref": "eisdata.json",
+            "title": "Electrochemical impedance spectroscopy data"
+          },
+         {
+            "$ref": "cyclingdata.json",
+            "title": "Electrochemical cycling data"
+          },
+          {
+            "$ref": "database.json",
+            "title": "Database"
           }
         ]
      }  

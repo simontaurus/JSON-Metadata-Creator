@@ -7,37 +7,46 @@
   ],
   "properties": {
     "file_type": {
+      "title": "File type",
       "type": "string",
       "enum": ["Video"]
     },
     "file_format": {
+      "title": "File format",
       "type": "string",
       "enum": [
-        "mp4", 
-        "mpg", 
-        "avi", 
-        "wmv", 
-        "mov"
+        ".mp4",
+        ".mpg",
+        ".avi",
+        ".wmv",
+        ".mov"
       ]
     },
     "resolution": {
+      "title": "Resolution",
       "type": "string",
       "enum": [
-        "4K", 
+        "4K",
+        "2K",
         "FHD", 
         "HD",
         "SD"
       ]
     },
     "caption": {
+      "title": "Caption",
       "type": "string"
     },
     "copy_right": {
+      "title": "Copy right",
       "type": "string"
     },
     "purpose": {
+      "title": "Purpose",
       "type": "string",
-      "description": "e. g. research, documentation, web media, print media, social media, press release"
+      "options": {
+        "infoText": "E. g. research, documentation, web media, print media, social media, press release"
+      }
     }
   }
 }

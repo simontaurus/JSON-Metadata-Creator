@@ -7,16 +7,22 @@
    ],
    "properties": {
           "affiliation": {
+            "title": "Affiliation",
             "type": "string",
             "enum": [
-              "Institution A",
-              "Company B"
-            ],
-            "default": "Institution A"
+              "Fraunhofer ISC",
+              "ElringKlinger",
+              "VUB",
+              "CEA",
+              "CSEM",
+              "CIDETEC",
+              "Arkema",
+              "Other"
+            ]
           },
           "name": {
-            "type": "string",
-            "default": "Test User"
+            "title": "Name",
+            "type": "string"
           }
     }
 }

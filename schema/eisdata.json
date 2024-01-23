@@ -1,0 +1,241 @@
+{
+  "title": "Electrochemical impedance spectroscopy data",
+  "type": "object",
+  "required": [
+    "file_type",
+    "file_format"
+  ],
+  "properties": {
+    "file_type": {
+      "title": "File type",
+      "type": "string",
+      "enum": [
+        "Electrochemical impedance spectroscopy data"
+      ]
+    },
+    "file_format": {
+      "title": "File format",
+      "type": "string",
+      "enum": [
+        ".txt",
+        ".dat",
+        ".z (ZView)",
+        ".mpt (ZView & EC-Lab)",
+        ".mpr (EC-Lab)",
+        ".zdat (ZView)",
+        ".mdat (ZView)",
+        ".dta (Gamry)"
+      ]
+    },
+    "num_header_lines": {
+      "title": "Number of header lines",
+      "type": "integer",
+      "options": {
+        "infoText": "Number of header lines. Last line is supposed to contain column names. If the file contains no header line choose 0"
+      }
+    },
+    "columns": {
+      "title": "Columns",
+      "type": "array",
+      "format": "table",
+      "uniqueItems": true,
+      "options": {
+        "infoText": "'header': column label in the file, 'name': preferred label for import, 'unit': physical unit, 'description': comment / free text"
+      },
+      "items": {
+        "title": "Column",
+        "type": "object",
+        "required": [
+          "header",
+          "name",
+          "description"
+        ],
+        "properties": {
+          "header": {
+            "title": "Header",
+            "type": "string",
+            "options": {
+              "infoText": "The name of the column as specified in the header"
+            }
+          },
+          "name": {
+            "title": "Name",
+            "type": "string",
+            "options": {
+              "infoText": "The name of the column to be used after import"
+            }
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "description": {
+            "title": "Description",
+            "type": "string"
+          }
+        }
+      }
+    },
+    "procedure_details": {
+      "title": "Procedure details",
+      "type": "object",
+      "properties": {
+        "eis_type": {
+          "title": "EIS type",
+          "type": "string",
+          "enum": [
+            "PEIS",
+            "GEIS",
+            "ORP-EIS",
+            "NFRA"
+          ]
+        },
+        "mode": {
+          "title": "Mode",
+          "type": "string",
+          "enum": [
+            "Single sine",
+            "Multi sine",
+            "ORP-EIS (all frequencies at once)"
+          ]
+        },
+        "amplitude": {
+          "title": "Amplitude",
+          "type": "number",
+          "options": {
+            "infoText": "The amplitude of the excitation in mV or mA, depending on EIS type"
+          }
+        },
+        "amplitude_unit": {
+          "title": "Unit of the amplitude",
+          "type": "string",
+          "enum": [
+            "mV",
+            "mA"
+          ],
+          "default": "mV",
+          "options": {
+            "infoText": "The unit of the amplitude of the excitation"
+          }
+        },
+        "frequency_range": {
+          "title": "Frequency range",
+          "type": "object",
+          "properties": {
+            "lowest_frequency": {
+              "title": "Lowest frequency in Hz",
+              "type": "number"
+            },
+            "highest_frequency": {
+              "title": "Highest frequency in Hz",
+              "type": "number"
+            },
+            "step_size": {
+              "title": "Step size",
+              "type": "object",
+              "properties": {
+                "num_points": {
+                  "title": "Number of points",
+                  "type": "integer"
+                },
+                "boundary_option": {
+                  "title": "Boundary option",
+                  "type": "string",
+                  "enum": [
+                    "per decade",
+                    "across all frequencies"
+                  ]
+                },
+                "spacing_option": {
+                  "title": "Spacing option",
+                  "type": "string",
+                  "enum": [
+                    "logarithmic",
+                    "linear",
+                    "semi-logarithmic"
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "averaging": {
+          "title": "Averaging",
+          "type": "number",
+          "default": 1,
+          "options": {
+            "infoText": "The number of repetitions averaged for a single data point in the file"
+          }
+        },
+        "drift_correction": {
+          "title": "Drift correction",
+          "type": "boolean",
+          "default": false,
+          "options": {
+            "infoText": "If the drift correction is enabled, the frequency will be swept downwards and upwards"
+          }
+        }
+      }
+    },
+    "setup_details": {
+      "title": "Setup details",
+      "type": "object",
+      "properties": {
+        "control": {
+          "title": "Control",
+          "type": "string",
+          "enum": [
+            "WE vs. CE",
+            "WE vs. RE",
+            "CE vs. RE"
+          ]
+        }
+      }
+    },
+    "conditions": {
+      "title": "Conditions",
+      "type": "object",
+      "properties": {
+        "ambient_temperature": {
+          "title": "Ambient temperature in °C",
+          "type": "number"
+        },
+        "sample_state": {
+          "title": "Sample state",
+          "type": "array",
+          "format": "table",
+          "uniqueItems": true,
+          "items": {
+            "title": "State",
+            "type": "object",
+            "required": [
+              "variable",
+              "value"
+            ],
+            "properties": {
+              "variable": {
+                "title": "Variable",
+                "type": "string",
+                "enum": [
+                  "Time at rest / s",
+                  "SoC / %",
+                  "Cell voltage / V",
+                  "Constant dc voltage / V",
+                  "Constant dc current / mA"
+                ]
+              },
+              "value": {
+                "title": "Value",
+                "type": "number"
+              },
+              "description": {
+                "title": "Description",
+                "type": "string"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

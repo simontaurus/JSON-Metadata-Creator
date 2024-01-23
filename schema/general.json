@@ -18,21 +18,38 @@
         "hidden": true
       }
     },
-    "file_name": {
-      "type": "string",
-      "description": "Name of the file itself",
-      "default": "<file name>"
-    },
-    "full_path": {
+    "form_url": {
       "type": "string",
       "format": "uri",
-      "description": "Full path/uri of file location",
-      "default": "<uri>"
+      "default": "https://horizon-2020-spartacus.github.io/JSON-Metadata-Creator/",
+      "options": {
+        "hidden": true
+      }
+    },
+    "file_name": {
+      "title": "File name",
+      "type": "string",
+      "default": "<file name>",
+      "options": {
+        "infoText": "Name of the file to be described by the JSON"
+      }
+    },
+    "full_path": {
+      "title": "Full path",
+      "type": "string",
+      "format": "uri",
+      "default": "<uri>",
+      "options": {
+        "infoText": "Full path or uri of file location"
+      }
     },
     "file_description": {
+      "title": "File description",
       "type": "string",
       "format": "textarea",
-      "description": "Description of the file"
+      "options": {
+        "infoText": "A description of the file"
+      }
     },
     "tags": {
       "type": "array",
@@ -45,6 +62,7 @@
       }
     },
     "creation_date": {
+      "title": "Creation date",
       "type": "string",
       "format": "date",
       "options": {
@@ -52,6 +70,7 @@
       }
     },
     "last_modified_date": {
+      "title": "Date of last modification",
       "type": "string",
       "format": "date",
       "options": {
@@ -59,9 +78,9 @@
       }
     },
     "contributors": {
+      "title": "Contributors",
       "type": "array",
       "format": "table",
-      "title": "Contributors",
       "uniqueItems": true,
       "items": {
         "title": "Contributor",
@@ -69,18 +88,30 @@
       }
     },
     "data_policy": {
+      "title": "Data policy",
       "type": "string",
       "enum": [
         "Internal",
-        "Selected Externals",
+        "Selected externals",
         "Public"
       ],
-      "description": "Access restrictions of the file",
-      "default": "Institution A"
+      "default": "Internal",
+      "options": {
+        "infoText": "Access restrictions of the file"
+      }
     },
     "specifics": {
       "title": "Specifics",
-      "$ref": "specifics.json"
+      "type": "array",
+      "format": "tabs",
+      "items": {
+      "title": "Specific",
+      "headerTemplate": "{{i}} - {{self.file_type}}",
+      "options": {
+            "keep_oneof_values": false
+      },
+      "$ref": "specificsOneOf.json"
+     }
     }
   }
 }

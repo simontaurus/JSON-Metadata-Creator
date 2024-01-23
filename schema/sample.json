@@ -1,0 +1,26 @@
+{
+  "title": "Sample reference",
+  "type": "object",
+  "required": [
+    "file_type",
+    "sample_id"
+  ],
+  "properties": {
+    "file_type": {
+      "title": "File type",
+      "type": "string",
+      "enum": ["Sample"]
+    },
+    "sample_id": {
+      "title": "Sample ID",
+      "type": "string"
+    },
+    "sample_description": {
+      "title": "Sample description",
+      "type": "string",
+      "options": {
+        "infoText": "A description of the sample"
+      }
+    }
+  }
+}
